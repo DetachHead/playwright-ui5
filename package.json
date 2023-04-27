@@ -1,0 +1,49 @@
+{
+  "name": "playwright-ui5",
+  "version": "0.0.1",
+  "files": [
+    "dist",
+    "src/node"
+  ],
+  "main": "dist/node/main.js",
+  "scripts": {
+    "test": "npm run build && tsc -p tests/tsconfig.json && playwright test",
+    "lint:check": "eslint . --ext .ts",
+    "lint:fix": "npm run lint:check -- --fix",
+    "format:check": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "_esbuild": "tsc -p src/browser/tsconfig.json && esbuild src/browser/main.ts --bundle --define:global=window",
+    "build:browser": "npm run _esbuild -- --format=cjs --outdir=dist/browser",
+    "build:node": "tsc -p src/node/tsconfig.json",
+    "debug": "npm run _esbuild -- --format=esm --outdir=debug/dist/browser --servedir=debug",
+    "build": "rimraf ./dist && npm run build:browser && npm run build:node",
+    "check": "npm run test && npm run lint:check && npm run format:check",
+    "setup": "npm ci && playwright install-deps"
+  },
+  "keywords": [],
+  "author": "detachhead",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DetachHead/playwright-ui5.git"
+  },
+  "devDependencies": {
+    "@detachhead/eslint-config": "^1.2.0",
+    "@playwright/test": "^1.33.0",
+    "@sapui5/ts-types": "^1.113.0",
+    "@trivago/prettier-plugin-sort-imports": "^3.3.0",
+    "@types/eslint": "^8.4.6",
+    "@types/node": "^18.16.1",
+    "@types/three": "^0.150.2",
+    "esbuild": "^0.15.5",
+    "prettier": "^2.4.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "playwright": "^1.33.0",
+    "throw-expression": "^1.0.2",
+    "ts-is-present": "^1.2.2"
+  }
+}
