@@ -2,7 +2,7 @@ import { CssSelectorParser } from 'css-selector-parser'
 import { isFilled } from 'ts-is-present'
 
 const parser = new CssSelectorParser()
-parser.registerAttrEqualityMods('^', '$', '*', '~')
+parser.registerAttrEqualityMods('^', '$', '*', '~', '|')
 
 const queryAll = (_root: Element | Document, selector: string): Element[] => {
     const parsedSelector = parser.parse(selector)
@@ -38,6 +38,7 @@ const queryAll = (_root: Element | Document, selector: string): Element[] => {
                 '$=': actualValue.endsWith(attr.value),
                 '*=': actualValue.includes(attr.value),
                 '~=': actualValue.split(/\s+/u).includes(attr.value),
+                '|=': actualValue.split('-')[0] === attr.value,
             }[attr.operator]
         })
     })
