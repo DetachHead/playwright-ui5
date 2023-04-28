@@ -1,45 +1,44 @@
-import { tail } from 'lodash'
-import { throwIfNull, throwIfUndefined } from 'throw-expression'
+import { CssSelectorParser } from 'css-selector-parser'
 import { isFilled } from 'ts-is-present'
 
-interface Selector {
-    controlType: string
-    properties: Record<string, string>
-}
-
-const parseSelector = (selector: string): Selector => {
-    // CRINGE!!!!!! TODO: replace this with an actual parser
-    const tokens = selector.split('[')
-    const controlType = throwIfUndefined(tokens[0], 'this should NEVER happen')
-    const properties = tail(tokens).map((prop) => prop.slice(0, -1))
-    const pairs = Object.fromEntries(
-        properties.map((property) => {
-            const errorMessage = `syntax error in selector: ${property}`
-            const [_, key, __, value] = throwIfNull(
-                property.match(/^(\w+)=('([^']*)'|"([^"]*)")$/u),
-                errorMessage,
-            )
-            if (key === undefined || value === undefined) {
-                throw new Error(errorMessage)
-            }
-            return [key, value]
-        }),
-    )
-    return { controlType, properties: pairs }
-}
+const parser = new CssSelectorParser()
+parser.registerAttrEqualityMods('^', '$', '*', '~')
 
 const queryAll = (_root: Element | Document, selector: string): Element[] => {
-    const parsedSelector = parseSelector(selector)
+    const parsedSelector = parser.parse(selector)
+    if (parsedSelector.type === 'selectors') {
+        throw new Error('comma-separated selectors not supported')
+    }
+    const { rule } = parsedSelector
+
+    // hack to prevent parser from treating . as classes:
+    rule.tagName = [rule.tagName, ...(rule.classNames ?? [])].join('.')
+    delete rule.classNames
+
     const controls = sap.ui.core.Element.registry.filter((element) => {
-        if (element.getMetadata().getName() !== parsedSelector.controlType) {
+        if (element.getMetadata().getName() !== rule.tagName) {
             return false
         }
-        return Object.entries(parsedSelector.properties).every(([key, value]) => {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- https://github.com/mdevils/css-selector-parser/pull/23
+        return (rule.attrs ?? []).every((attr) => {
+            let actualValue: string
             try {
-                return String(element.getProperty(key)) === value
+                actualValue = String(element.getProperty(attr.name))
             } catch {
-                return false // property doesn't exist
+                // property doesn't exist
+                return false
             }
+            if (!('value' in attr)) {
+                // eg. sap.m.Button[attr]
+                return true
+            }
+            return {
+                '=': actualValue === attr.value,
+                '^=': actualValue.startsWith(attr.value),
+                '$=': actualValue.endsWith(attr.value),
+                '*=': actualValue.includes(attr.value),
+                '~=': actualValue.split(/\s+/u).includes(attr.value),
+            }[attr.operator]
         })
     })
     return controls.map((control) => control.getDomRef()).filter(isFilled)
