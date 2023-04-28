@@ -31,12 +31,12 @@
     "@detachhead/eslint-config": "^1.2.0",
     "@playwright/test": "^1.33.0",
     "@sapui5/ts-types": "^1.113.0",
-    "@trivago/prettier-plugin-sort-imports": "^3.3.0",
+    "@trivago/prettier-plugin-sort-imports": "^4.1.1",
     "@types/eslint": "^8.4.6",
     "@types/node": "^18.16.1",
     "@types/three": "^0.150.2",
     "esbuild": "^0.15.5",
-    "prettier": "^2.4.1",
+    "prettier": "^2.8.8",
     "rimraf": "^3.0.2",
     "typescript": "^4.7.4"
   },
@@ -45,5 +45,13 @@
     "playwright": "^1.33.0",
     "throw-expression": "^1.0.2",
     "ts-is-present": "^1.2.2"
-  }
+  },
+	"//": "https://github.com/trivago/prettier-plugin-sort-imports/issues/204#issuecomment-1431287240",
+	"overrides": {
+		"@trivago/prettier-plugin-sort-imports": {
+			"@babel/core": "7.20.12",
+			"@babel/parser": "7.20.15",
+			"@babel/traverse": "7.20.13"
+		}
+	}
 }
