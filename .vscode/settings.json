@@ -19,5 +19,6 @@
     "diffEditor.ignoreTrimWhitespace": false,
     "files.eol": "\n",
     "typescript.enablePromptUseWorkspaceTsdk": true,
-    "editor.acceptSuggestionOnCommitCharacter": false
+    "editor.acceptSuggestionOnCommitCharacter": false,
+    "git.useEditorAsCommitInput": false
 }
