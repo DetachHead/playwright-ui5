@@ -6,17 +6,25 @@ parser.registerAttrEqualityMods('^', '$', '*', '~', '|')
 
 const queryAll = (_root: Element | Document, selector: string): Element[] => {
     const parsedSelector = parser.parse(selector)
+    if (selector === '') {
+        throw new Error('ui5 selector is empty')
+    }
     if (parsedSelector.type === 'selectors') {
         throw new Error('comma-separated selectors not supported')
     }
     const { rule } = parsedSelector
 
     // hack to prevent parser from treating . as classes:
-    rule.tagName = [rule.tagName, ...(rule.classNames ?? [])].join('.')
-    delete rule.classNames
+    if (rule.tagName && rule.classNames) {
+        rule.tagName = [rule.tagName, ...rule.classNames].join('.')
+        delete rule.classNames
+    }
 
     const controls = sap.ui.core.Element.registry.filter((element) => {
-        if (element.getMetadata().getName() !== rule.tagName) {
+        if (
+            ![element.getMetadata().getName(), '*', undefined].includes(rule.tagName) ||
+            (rule.id && element.getId() !== rule.id)
+        ) {
             return false
         }
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- https://github.com/mdevils/css-selector-parser/pull/23
