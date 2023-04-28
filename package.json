@@ -15,7 +15,6 @@
     "_esbuild": "tsc -p src/browser/tsconfig.json && esbuild src/browser/main.ts --bundle --define:global=window",
     "build:browser": "npm run _esbuild -- --format=cjs --outdir=dist/browser",
     "build:node": "tsc -p src/node/tsconfig.json",
-    "debug": "npm run _esbuild -- --format=esm --outdir=debug/dist/browser --servedir=debug",
     "build": "rimraf ./dist && npm run build:browser && npm run build:node",
     "check": "npm run test && npm run lint:check && npm run format:check",
     "setup": "npm ci && playwright install-deps"
