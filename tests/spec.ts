@@ -12,9 +12,20 @@ test.beforeEach(async ({ page }) => {
     )
 })
 
+test.describe('any control', () => {
+    test('*', ({ page }) => expect(page.locator('ui5=*')).toHaveCount(45))
+    test('id', ({ page }) => expect(page.locator('ui5=#__button1')).toHaveCount(1))
+    test('property', ({ page }) => expect(page.locator('ui5=[text]')).toHaveCount(25))
+})
+
 test.describe('control without property', () => {
     test('exists', ({ page }) => expect(page.locator('ui5=sap.m.Button')).toHaveCount(12))
     test("doesn't exist", ({ page }) => expect(page.locator('ui5=sap.m.Table')).toBeHidden())
+})
+test.describe('control with id', () => {
+    test('exists', ({ page }) => expect(page.locator('ui5=sap.m.Button#__button1')).toHaveCount(1))
+    test("doesn't exist", ({ page }) =>
+        expect(page.locator('ui5=sap.m.Button#asdfasdf')).toBeHidden())
 })
 
 test.describe('control with property exists', () => {
