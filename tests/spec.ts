@@ -17,11 +17,33 @@ test.describe('control without property', () => {
     test("doesn't exist", ({ page }) => expect(page.locator('ui5=sap.m.Table')).toBeHidden())
 })
 
-test.describe('control with property', () => {
+test.describe('control with property exists', () => {
+    test('exists', ({ page }) => expect(page.locator('ui5=sap.m.Button[text]')).toHaveCount(12))
+    test("doesn't exist", ({ page }) => expect(page.locator('ui5=sap.m.Button[asdf]')).toBeHidden())
+})
+test.describe('control with property =', () => {
     test('exists', ({ page }) =>
         expect(page.locator("ui5=sap.m.Button[text='Accept']")).toHaveCount(1))
     test("doesn't exist", ({ page }) =>
         expect(page.locator("ui5=sap.m.Button[text='asdfasdf']")).toBeHidden())
+})
+test.describe('control with property ^=', () => {
+    test('exists', ({ page }) =>
+        expect(page.locator("ui5=sap.m.Button[text^='Acc']")).toHaveCount(1))
+    test("doesn't exist", ({ page }) =>
+        expect(page.locator("ui5=sap.m.Button[text^='asdfasdf']")).toBeHidden())
+})
+test.describe('control with property $=', () => {
+    test('exists', ({ page }) =>
+        expect(page.locator("ui5=sap.m.Button[text$='ept']")).toHaveCount(1))
+    test("doesn't exist", ({ page }) =>
+        expect(page.locator("ui5=sap.m.Button[text$='asdfasdf']")).toBeHidden())
+})
+test.describe('control with property *=', () => {
+    test('exists', ({ page }) =>
+        expect(page.locator("ui5=sap.m.Button[text*='ccep']")).toHaveCount(1))
+    test("doesn't exist", ({ page }) =>
+        expect(page.locator("ui5=sap.m.Button[text*='asdfasdf']")).toBeHidden())
 })
 test.describe('control with multiple properties', () => {
     test('exists', ({ page }) =>
