@@ -1,6 +1,6 @@
 {
   "name": "playwright-ui5",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "files": [
     "dist",
     "src/node"
@@ -46,12 +46,12 @@
     "throw-expression": "^1.0.2",
     "ts-is-present": "^1.2.2"
   },
-	"//": "https://github.com/trivago/prettier-plugin-sort-imports/issues/204#issuecomment-1431287240",
-	"overrides": {
-		"@trivago/prettier-plugin-sort-imports": {
-			"@babel/core": "7.20.12",
-			"@babel/parser": "7.20.15",
-			"@babel/traverse": "7.20.13"
-		}
-	}
+  "//": "https://github.com/trivago/prettier-plugin-sort-imports/issues/204#issuecomment-1431287240",
+  "overrides": {
+    "@trivago/prettier-plugin-sort-imports": {
+      "@babel/core": "7.20.12",
+      "@babel/parser": "7.20.15",
+      "@babel/traverse": "7.20.13"
+    }
+  }
 }
