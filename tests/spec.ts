@@ -1,9 +1,20 @@
-import selectorEngine from '../dist/node/main'
+import { SelectorEngine } from '../src/node/main'
+import { HasDefaultExport } from '@detachhead/ts-helpers/dist/types/misc'
 import { expect, test } from '@playwright/test'
+import { execSync } from 'child_process'
+import isCI from 'is-ci'
 import { selectors } from 'playwright'
 
 test.beforeAll(async () => {
-    await selectors.register('ui5', selectorEngine)
+    if (!isCI) {
+        // prevent tests running on outdated code when running locally, since node src reads compiled browser code
+        execSync('npm run build')
+    }
+    await selectors.register(
+        'ui5',
+        // need dynamic import, otherwise it could import outdated code:
+        ((await import('../dist/node/main' as string)) as HasDefaultExport<SelectorEngine>).default,
+    )
 })
 
 test.beforeEach(async ({ page }) => {

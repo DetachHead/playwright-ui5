@@ -7,7 +7,7 @@
   ],
   "main": "dist/node/main.js",
   "scripts": {
-    "test": "npm run build && tsc -p tests/tsconfig.json && playwright test",
+    "test": "tsc -p tests/tsconfig.json && playwright test",
     "lint:check": "eslint .",
     "lint:fix": "npm run lint:check -- --fix",
     "format:check": "prettier --check .",
@@ -15,8 +15,9 @@
     "_esbuild": "tsc -p src/browser/tsconfig.json && esbuild src/browser/main.ts --bundle --define:global=window",
     "build:browser": "npm run _esbuild -- --format=cjs --outdir=dist/browser",
     "build:node": "tsc -p src/node/tsconfig.json",
+    "typecheck:config-files": "tsc",
     "build": "rimraf ./dist && npm run build:browser && npm run build:node",
-    "check": "npm run test && npm run lint:check && npm run format:check",
+    "check": "npm run typecheck:config-files && npm run build && npm run test && npm run lint:check && npm run format:check",
     "setup": "npm ci && playwright install-deps"
   },
   "keywords": [],
@@ -28,13 +29,16 @@
   },
   "devDependencies": {
     "@detachhead/eslint-config": "^1.2.0",
+    "@detachhead/ts-helpers": "^16.1.0",
     "@playwright/test": "^1.33.0",
     "@sapui5/ts-types": "^1.113.0",
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
     "@types/eslint": "^8.4.6",
+    "@types/is-ci": "^3.0.0",
     "@types/node": "^18.16.1",
     "@types/three": "^0.150.2",
     "esbuild": "^0.15.5",
+    "is-ci": "^3.0.1",
     "prettier": "^2.8.8",
     "rimraf": "^3.0.2",
     "typescript": "^4.7.4"
