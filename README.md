@@ -27,7 +27,7 @@ this selector engine uses css selector-like syntax. the main difference is that 
 
 | feature             | examples                                                | suported | notes                                                                                             |
 | ------------------- | ------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------- |
-| type selectors      | `sap.m.Button`, `*`                                     | ✔        |
+| type selectors      | `sap.m.Button`, `m.Button`, `*`                         | ✔        |
 | class selectors     | n/a                                                     | n/a      | as mentioned above, `.` is treated as part of the control type                                    |
 | attribute selectors | `[text]`, `[text='foo']`,`[text*='foo']`                | ✔        | some equality mods are useless for ui5 (eg. `\|=`) but are supported for the sake of completeness |
 | id selectors        | `sap.m.Button#foo`                                      | ✔        | you should not use id selectors if the id is generated (eg. `__button1`) as they can change often |

@@ -18,6 +18,11 @@ test.describe('any control', () => {
     test('property', ({ page }) => expect(page.locator('ui5=[text]')).toHaveCount(25))
 })
 
+test.describe('implicit "sap." namespace', () => {
+    test('exists', ({ page }) => expect(page.locator('ui5=m.Button')).toHaveCount(12))
+    test("doesn't exist", ({ page }) => expect(page.locator('ui5=m.Table')).toBeHidden())
+})
+
 test.describe('control without property', () => {
     test('exists', ({ page }) => expect(page.locator('ui5=sap.m.Button')).toHaveCount(12))
     test("doesn't exist", ({ page }) => expect(page.locator('ui5=sap.m.Table')).toBeHidden())
