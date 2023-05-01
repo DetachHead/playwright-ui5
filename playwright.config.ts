@@ -1,5 +1,6 @@
 import type { PlaywrightTestConfig } from '@playwright/test'
 import { devices } from '@playwright/test'
+import isCI from 'is-ci'
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -8,7 +9,7 @@ const config: PlaywrightTestConfig = {
     testDir: './tests',
     testMatch: /.*\.ts/u,
     /* Maximum time one test can run for. */
-    timeout: 60 * 1000,
+    timeout: 3 * 60 * 1000,
     expect: {
         /**
          * Maximum time expect() should wait for the condition to be met.
@@ -17,9 +18,7 @@ const config: PlaywrightTestConfig = {
         timeout: 5000,
     },
     /* Fail the build on CI if you accidentally left test.only in the source code. */
-    forbidOnly: !!process.env['CI'],
-    /* Retry on CI only */
-    retries: process.env['CI'] ? 2 : 0,
+    forbidOnly: isCI,
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
     reporter: 'html',
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */

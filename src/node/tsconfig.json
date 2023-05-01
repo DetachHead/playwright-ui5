@@ -7,5 +7,6 @@
         "lib": ["es2021", "dom"], // https://github.com/microsoft/playwright/issues/16707,
         "rootDir": "../"
     },
-    "include": ["**/*.ts"]
+    "include": ["**/*.ts"],
+    "exclude": []
 }

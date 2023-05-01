@@ -25,10 +25,10 @@ const config = {
         ],
     },
     overrides: [
-        {
-            files: ['src/browser/**/*.ts'],
-            parserOptions: { ...parserOptions, project: ['./src/browser/tsconfig.json'] },
-        },
+        ...['src/browser', 'src/node', 'tests'].map((path) => ({
+            files: [`${path}/**/*.ts`],
+            parserOptions: { ...parserOptions, project: [`./${path}/tsconfig.json`] },
+        })),
         {
             files: ['.eslintrc.cjs'],
             parserOptions,
