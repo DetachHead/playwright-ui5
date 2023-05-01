@@ -14,8 +14,13 @@ const queryAll = (_root: Element | Document, selector: string): Element[] => {
     }
     const { rule } = parsedSelector
 
-    // hack to prevent parser from treating . as classes:
     if (rule.tagName && rule.classNames) {
+        // support omitting the sap., since every ui5 control starts with sap (i think):
+        const sapNamespace = 'sap'
+        if (rule.tagName !== sapNamespace) {
+            rule.tagName = `${sapNamespace}.${rule.tagName}`
+        }
+        // hack to prevent parser from treating . as classes:
         rule.tagName = [rule.tagName, ...rule.classNames].join('.')
         delete rule.classNames
     }
