@@ -20,6 +20,7 @@ test.beforeAll(async () => {
 test.beforeEach(async ({ page }) => {
     await page.goto(
         'https://ui5.sap.com/1.112.3/resources/sap/ui/documentation/sdk/index.html?sap-ui-xx-sample-id=sap.m.sample.Button&sap-ui-xx-sample-lib=sap.m&sap-ui-xx-sample-origin=.&sap-ui-xx-dk-origin=https://ui5.sap.com',
+        { waitUntil: 'networkidle' },
     )
 })
 
@@ -31,50 +32,51 @@ test.describe('any control', () => {
 
 test.describe('implicit "sap." namespace', () => {
     test('exists', ({ page }) => expect(page.locator('ui5=m.Button')).toHaveCount(12))
-    test("doesn't exist", ({ page }) => expect(page.locator('ui5=m.Table')).toBeHidden())
+    test("doesn't exist", ({ page }) => expect(page.locator('ui5=m.Table')).toHaveCount(0))
 })
 
 test.describe('control without property', () => {
     test('exists', ({ page }) => expect(page.locator('ui5=sap.m.Button')).toHaveCount(12))
-    test("doesn't exist", ({ page }) => expect(page.locator('ui5=sap.m.Table')).toBeHidden())
+    test("doesn't exist", ({ page }) => expect(page.locator('ui5=sap.m.Table')).toHaveCount(0))
 })
 test.describe('control with id', () => {
     test('exists', ({ page }) => expect(page.locator('ui5=sap.m.Button#__button1')).toHaveCount(1))
     test("doesn't exist", ({ page }) =>
-        expect(page.locator('ui5=sap.m.Button#asdfasdf')).toBeHidden())
+        expect(page.locator('ui5=sap.m.Button#asdfasdf')).toHaveCount(0))
 })
 
 test.describe('control with property exists', () => {
     test('exists', ({ page }) => expect(page.locator('ui5=sap.m.Button[text]')).toHaveCount(12))
-    test("doesn't exist", ({ page }) => expect(page.locator('ui5=sap.m.Button[asdf]')).toBeHidden())
+    test("doesn't exist", ({ page }) =>
+        expect(page.locator('ui5=sap.m.Button[asdf]')).toHaveCount(0))
 })
 test.describe('control with property =', () => {
     test('exists', ({ page }) =>
         expect(page.locator("ui5=sap.m.Button[text='Accept']")).toHaveCount(1))
     test("doesn't exist", ({ page }) =>
-        expect(page.locator("ui5=sap.m.Button[text='asdfasdf']")).toBeHidden())
+        expect(page.locator("ui5=sap.m.Button[text='asdfasdf']")).toHaveCount(0))
 })
 test.describe('control with property ^=', () => {
     test('exists', ({ page }) =>
         expect(page.locator("ui5=sap.m.Button[text^='Acc']")).toHaveCount(1))
     test("doesn't exist", ({ page }) =>
-        expect(page.locator("ui5=sap.m.Button[text^='asdfasdf']")).toBeHidden())
+        expect(page.locator("ui5=sap.m.Button[text^='asdfasdf']")).toHaveCount(0))
 })
 test.describe('control with property $=', () => {
     test('exists', ({ page }) =>
         expect(page.locator("ui5=sap.m.Button[text$='ept']")).toHaveCount(1))
     test("doesn't exist", ({ page }) =>
-        expect(page.locator("ui5=sap.m.Button[text$='asdfasdf']")).toBeHidden())
+        expect(page.locator("ui5=sap.m.Button[text$='asdfasdf']")).toHaveCount(0))
 })
 test.describe('control with property *=', () => {
     test('exists', ({ page }) =>
         expect(page.locator("ui5=sap.m.Button[text*='ccep']")).toHaveCount(1))
     test("doesn't exist", ({ page }) =>
-        expect(page.locator("ui5=sap.m.Button[text*='asdfasdf']")).toBeHidden())
+        expect(page.locator("ui5=sap.m.Button[text*='asdfasdf']")).toHaveCount(0))
 })
 test.describe('control with multiple properties', () => {
     test('exists', ({ page }) =>
         expect(page.locator("ui5=sap.m.Button[text='Accept'][busy='false']")).toHaveCount(1))
     test("doesn't exist", ({ page }) =>
-        expect(page.locator("ui5=sap.m.Button[text='Accept'][busy='true']")).toBeHidden())
+        expect(page.locator("ui5=sap.m.Button[text='Accept'][busy='true']")).toHaveCount(0))
 })
