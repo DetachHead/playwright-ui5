@@ -1,10 +1,9 @@
 import { CssSelectorParser } from 'css-selector-parser'
-import { isFilled } from 'ts-is-present'
 
 const parser = new CssSelectorParser()
 parser.registerAttrEqualityMods('^', '$', '*', '~', '|')
 
-const queryAll = (_root: Element | Document, selector: string): Element[] => {
+const queryAll = (root: Element | Document, selector: string): Element[] => {
     const parsedSelector = parser.parse(selector)
     if (selector === '') {
         throw new Error('ui5 selector is empty')
@@ -55,7 +54,14 @@ const queryAll = (_root: Element | Document, selector: string): Element[] => {
             }[attr.operator]
         })
     })
-    return controls.map((control) => control.getDomRef()).filter(isFilled)
+    return controls
+        .map((control) => control.getDomRef())
+        .filter(
+            (element): element is Element =>
+                element !== null &&
+                // on nested selectors/locators, exclude any elements from outside that scope by making sure they're present in this root:
+                root.querySelector(`#${element.id}`) !== null,
+        )
 }
 
 export default {

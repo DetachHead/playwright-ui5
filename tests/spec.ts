@@ -80,3 +80,10 @@ test.describe('control with multiple properties', () => {
     test("doesn't exist", ({ page }) =>
         expect(page.locator("ui5=sap.m.Button[text='Accept'][busy='true']")).toHaveCount(0))
 })
+
+test.describe('nested selectors', () => {
+    test('exists', ({ page }) =>
+        expect(page.locator("ui5=m.HBox >> ui5=sap.m.Button[text='Default']")).toHaveCount(1))
+    test("doesn't exist", ({ page }) =>
+        expect(page.locator("ui5=m.HBox >> ui5=m.Button[text='Emphasized']")).toHaveCount(0))
+})

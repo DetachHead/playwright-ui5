@@ -47,8 +47,7 @@
     "css-selector-parser": "^1.4.1",
     "lodash": "^4.17.21",
     "playwright": "^1.33.0",
-    "throw-expression": "^1.0.2",
-    "ts-is-present": "^1.2.2"
+    "throw-expression": "^1.0.2"
   },
   "//": "https://github.com/trivago/prettier-plugin-sort-imports/issues/204#issuecomment-1431287240",
   "overrides": {
