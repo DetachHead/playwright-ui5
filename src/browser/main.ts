@@ -4,6 +4,9 @@ const parser = new CssSelectorParser()
 parser.registerAttrEqualityMods('^', '$', '*', '~', '|')
 
 const queryAll = (root: Element | Document, selector: string): Element[] => {
+    if (typeof sap === 'undefined') {
+        return []
+    }
     const parsedSelector = parser.parse(selector)
     if (selector === '') {
         throw new Error('ui5 selector is empty')
