@@ -89,7 +89,23 @@ test.describe('ui5 site', () => {
     })
 })
 
-test('no ui5', async ({ page }) => {
-    await page.setContent('<div></div>')
-    await expect(page.locator('ui5=m.Button')).toHaveCount(0)
+test.describe('no ui5 site', () => {
+    test('no ui5', async ({ page }) => {
+        await page.setContent('<div></div>')
+        await expect(page.locator('ui5=m.Button')).toHaveCount(0)
+    })
+    test.describe('unsupported syntax', () => {
+        test('comparitors', ({ page }) =>
+            expect(page.locator('ui5=m.Table > m.Button').isVisible()).rejects.toThrow(
+                /Expected rule but ">" found/u,
+            ))
+        test('pseudo-elements', ({ page }) =>
+            expect(page.locator('ui5=m.Table:has(m.Button)').isVisible()).rejects.toThrow(
+                /Pseudo classes are not enabled/u,
+            ))
+        test('comma-separated rules', ({ page }) =>
+            expect(page.locator('ui5=m.Table,m.Button').isVisible()).rejects.toThrow(
+                /comma-separated selectors not supported/u,
+            ))
+    })
 })
