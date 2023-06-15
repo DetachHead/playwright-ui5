@@ -1,41 +1,56 @@
-import { CssSelectorParser } from 'css-selector-parser'
+import { AstString, createParser } from 'css-selector-parser'
+import { throwIfUndefined } from 'throw-expression'
 
-const parser = new CssSelectorParser()
-parser.registerAttrEqualityMods('^', '$', '*', '~', '|')
+const parse = createParser({
+    syntax: {
+        combinators: [],
+        namespace: false,
+        attributes: { operators: ['=', '^=', '$=', '*=', '~=', '|='] },
+        pseudoElements: false,
+        tag: { wildcard: true },
+        ids: true,
+        // classes are actually not supported but need to enable this to support . in tag names,
+        // classes are then concatenated and appended to the tag name
+        classNames: true,
+    },
+})
 
 const queryAll = (root: Element | Document, selector: string): Element[] => {
-    const parsedSelector = parser.parse(selector)
+    const parsedSelector = parse(selector)
     if (selector === '') {
         throw new Error('ui5 selector is empty')
     }
-    if (parsedSelector.type === 'selectors') {
+    if (parsedSelector.rules.length > 1) {
         throw new Error('comma-separated selectors not supported')
     }
     if (typeof sap === 'undefined') {
         return []
     }
-    const { rule } = parsedSelector
+    const rule = throwIfUndefined(parsedSelector.rules[0], 'rules array was empty')
 
-    if (rule.tagName && rule.classNames) {
+    if (rule.tag?.type === 'TagName' && rule.classNames) {
         // support omitting the sap., since every ui5 control starts with sap (i think):
         const sapNamespace = 'sap'
-        if (rule.tagName !== sapNamespace) {
-            rule.tagName = `${sapNamespace}.${rule.tagName}`
+        if (rule.tag.name !== sapNamespace) {
+            rule.tag.name = `${sapNamespace}.${rule.tag.name}`
         }
         // hack to prevent parser from treating . as classes:
-        rule.tagName = [rule.tagName, ...rule.classNames].join('.')
+        rule.tag.name = [rule.tag.name, ...rule.classNames].join('.')
         delete rule.classNames
     }
 
     const controls = sap.ui.core.Element.registry.filter((element) => {
+        if (rule.ids && rule.ids.length > 1) {
+            throw new Error('multiple ids are not supported')
+        }
         if (
-            ![element.getMetadata().getName(), '*', undefined].includes(rule.tagName) ||
-            (rule.id && element.getId() !== rule.id)
+            (rule.tag?.type === 'TagName' && rule.tag.name !== element.getMetadata().getName()) ||
+            (rule.ids && rule.ids[0] !== element.getId())
         ) {
             return false
         }
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- https://github.com/mdevils/css-selector-parser/pull/23
-        return (rule.attrs ?? []).every((attr) => {
+
+        return (rule.attributes ?? []).every((attr) => {
             let actualValue: string
             try {
                 actualValue = String(element.getProperty(attr.name))
@@ -47,14 +62,20 @@ const queryAll = (root: Element | Document, selector: string): Element[] => {
                 // eg. sap.m.Button[attr]
                 return true
             }
+            const expectedValue = (attr.value as AstString).value
             return {
-                '=': actualValue === attr.value,
-                '^=': actualValue.startsWith(attr.value),
-                '$=': actualValue.endsWith(attr.value),
-                '*=': actualValue.includes(attr.value),
-                '~=': actualValue.split(/\s+/u).includes(attr.value),
-                '|=': actualValue.split('-')[0] === attr.value,
-            }[attr.operator]
+                '=': actualValue === expectedValue,
+                '^=': actualValue.startsWith(expectedValue),
+                '$=': actualValue.endsWith(expectedValue),
+                '*=': actualValue.includes(expectedValue),
+                '~=': actualValue.split(/\s+/u).includes(expectedValue),
+                '|=': actualValue.split('-')[0] === expectedValue,
+            }[
+                throwIfUndefined(
+                    attr.operator,
+                    'attribute operator was undefined when value was set (this should NEVER happen)',
+                )
+            ]
         })
     })
     return controls
