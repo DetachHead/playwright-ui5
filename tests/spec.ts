@@ -1,9 +1,8 @@
 import { SelectorEngine } from '../src/node/main'
 import { HasDefaultExport } from '@detachhead/ts-helpers/dist/types/misc'
-import { expect, test } from '@playwright/test'
+import { expect, selectors, test } from '@playwright/test'
 import { execSync } from 'child_process'
 import isCI from 'is-ci'
-import { selectors } from 'playwright'
 
 test.beforeAll(async () => {
     if (!isCI) {

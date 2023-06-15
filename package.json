@@ -18,7 +18,7 @@
     "typecheck:config-files": "tsc",
     "build": "rimraf ./dist && npm run build:browser && npm run build:node",
     "check": "npm run typecheck:config-files && npm run build && npm run test && npm run lint:check && npm run format:check",
-    "setup": "npm ci && playwright install-deps"
+    "setup": "npm ci && playwright install-deps && playwright install"
   },
   "keywords": [],
   "author": "detachhead",
@@ -46,7 +46,7 @@
   "dependencies": {
     "css-selector-parser": "^2",
     "lodash": "^4.17.21",
-    "playwright": "^1.33.0",
+    "playwright-core": "^1.33.0",
     "throw-expression": "^1.0.2"
   },
   "//": "https://github.com/trivago/prettier-plugin-sort-imports/issues/204#issuecomment-1431287240",

@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs'
 import { join } from 'path'
-import { selectors } from 'playwright'
+import { selectors } from 'playwright-core'
 
 export type SelectorEngine = Parameters<typeof selectors.register>[1]
 
