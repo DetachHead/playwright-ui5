@@ -1,4 +1,4 @@
-import { AstString, createParser } from 'css-selector-parser'
+import { AstSelector, AstString, createParser } from 'css-selector-parser'
 import { throwIfUndefined } from 'throw-expression'
 
 const parse = createParser({
@@ -7,6 +7,7 @@ const parse = createParser({
         namespace: false,
         attributes: { operators: ['=', '^=', '$=', '*=', '~=', '|='] },
         pseudoElements: false,
+        pseudoClasses: { definitions: { Selector: ['has'] } },
         tag: { wildcard: true },
         ids: true,
         // classes are actually not supported but need to enable this to support . in tag names,
@@ -15,18 +16,8 @@ const parse = createParser({
     },
 })
 
-const queryAll = (root: Element | Document, selector: string): Element[] => {
-    const parsedSelector = parse(selector)
-    if (selector === '') {
-        throw new Error('ui5 selector is empty')
-    }
-    if (parsedSelector.rules.length > 1) {
-        throw new Error('comma-separated selectors not supported')
-    }
-    if (typeof sap === 'undefined') {
-        return []
-    }
-    const rule = throwIfUndefined(parsedSelector.rules[0], 'rules array was empty')
+const queryRule = (root: Element | Document, selector: AstSelector): Element[] => {
+    const rule = throwIfUndefined(selector.rules[0], 'rules array was empty')
 
     if (rule.tag?.type === 'TagName' && rule.classNames) {
         // support omitting the sap., since every ui5 control starts with sap (i think):
@@ -80,12 +71,42 @@ const queryAll = (root: Element | Document, selector: string): Element[] => {
     })
     return controls
         .map((control) => control.getDomRef())
-        .filter(
-            (element): element is Element =>
-                element !== null &&
+        .filter((element): element is Element => {
+            if (
+                element === null ||
                 // on nested selectors/locators, exclude any elements from outside that scope by making sure they're present in this root:
-                root.querySelector(`#${element.id}`) !== null,
-        )
+                root.querySelector(`#${element.id}`) === null
+            ) {
+                return false
+            }
+            if (
+                rule.pseudoClasses &&
+                queryRule(
+                    element,
+                    throwIfUndefined(
+                        rule.pseudoClasses[0],
+                        '":has" pseudo-class was specified without an argument',
+                    ).argument as AstSelector,
+                ).length === 0
+            ) {
+                return false
+            }
+            return true
+        })
+}
+
+const queryAll = (root: Element | Document, selector: string): Element[] => {
+    const parsedSelector = parse(selector)
+    if (selector === '') {
+        throw new Error('ui5 selector is empty')
+    }
+    if (parsedSelector.rules.length > 1) {
+        throw new Error('comma-separated selectors not supported')
+    }
+    if (typeof sap === 'undefined') {
+        return []
+    }
+    return queryRule(root, parsedSelector)
 }
 
 export default {
