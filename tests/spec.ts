@@ -86,6 +86,12 @@ test.describe('ui5 site', () => {
         test("doesn't exist", ({ page }) =>
             expect(page.locator("ui5=m.HBox >> ui5=m.Button[text='Emphasized']")).toHaveCount(0))
     })
+    test.describe(':has', () => {
+        test('exists', ({ page }) =>
+            expect(page.locator("ui5=m.Toolbar:has(m.Button[text='Reject'])")).toHaveCount(1))
+        test("doesn't exist", ({ page }) =>
+            expect(page.locator('ui5=m.Toolbar:has(m.Toolbar)')).toHaveCount(0))
+    })
 })
 
 test.describe('no ui5 site', () => {
