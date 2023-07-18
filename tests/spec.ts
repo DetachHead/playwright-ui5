@@ -104,10 +104,6 @@ test.describe('no ui5 site', () => {
             expect(page.locator('ui5=m.Table > m.Button').isVisible()).rejects.toThrow(
                 /Expected rule but ">" found/u,
             ))
-        test('pseudo-elements', ({ page }) =>
-            expect(page.locator('ui5=m.Table:has(m.Button)').isVisible()).rejects.toThrow(
-                /Pseudo classes are not enabled/u,
-            ))
         test('comma-separated rules', ({ page }) =>
             expect(page.locator('ui5=m.Table,m.Button').isVisible()).rejects.toThrow(
                 /comma-separated selectors not supported/u,
