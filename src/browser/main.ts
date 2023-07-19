@@ -75,7 +75,7 @@ const querySelector = (root: Element | Document, selector: AstSelector): Element
                 if (
                     element === null ||
                     // on nested selectors/locators, exclude any elements from outside that scope by making sure they're present in this root:
-                    root.querySelector(`#${element.id}`) === null
+                    root.querySelector(`[id='${element.id}']`) === null
                 ) {
                     return false
                 }
