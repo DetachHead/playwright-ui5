@@ -36,3 +36,4 @@ this selector engine uses css selector-like syntax. the main difference is that 
 | id selectors        | `sap.m.Button#foo`                                      | ✔        | you should not use id selectors if the id is generated (eg. `__button1`) as they can change often |
 | nesting             | `sap.m.Table sap.m.Button`,`sap.m.Table > sap.m.Button` | ❌       | use playwright selector nesting instead (`ui5=sap.m.Table >> ui5=sap.m.Button`)                   |
 | pseudo-classes      | `sap.m.Table:has(sap.m.Button)`                         | ✔        | `:has` is supported                                                                               |
+| selector lists      | `sap.m.Button,sap.m.Table`                              | ✔        |

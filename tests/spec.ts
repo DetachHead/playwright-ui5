@@ -92,6 +92,16 @@ test.describe('ui5 site', () => {
         test("doesn't exist", ({ page }) =>
             expect(page.locator('ui5=m.Toolbar:has(m.Toolbar)')).toHaveCount(0))
     })
+    test.describe('comma-separated rules', () => {
+        test('exists', ({ page }) =>
+            expect(
+                page.locator("ui5=m.Button[text='Accept'],m.Button[text='Emphasized']"),
+            ).toHaveCount(2))
+        test("doesn't exist", ({ page }) =>
+            expect(page.locator("ui5=m.Button[text='asdf'],m.Button[text='asdfsdfg']")).toHaveCount(
+                0,
+            ))
+    })
 })
 
 test.describe('no ui5 site', () => {
@@ -103,10 +113,6 @@ test.describe('no ui5 site', () => {
         test('comparitors', ({ page }) =>
             expect(page.locator('ui5=m.Table > m.Button').isVisible()).rejects.toThrow(
                 /Expected rule but ">" found/u,
-            ))
-        test('comma-separated rules', ({ page }) =>
-            expect(page.locator('ui5=m.Table,m.Button').isVisible()).rejects.toThrow(
-                /comma-separated selectors not supported/u,
             ))
     })
 })
