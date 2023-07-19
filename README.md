@@ -35,5 +35,5 @@ this selector engine uses css selector-like syntax. the main difference is that 
 | attribute selectors | `[text]`, `[text='foo']`,`[text*='foo']`                | ✔        | some equality mods are useless for ui5 (eg. `\|=`) but are supported for the sake of completeness |
 | id selectors        | `sap.m.Button#foo`                                      | ✔        | you should not use id selectors if the id is generated (eg. `__button1`) as they can change often |
 | nesting             | `sap.m.Table sap.m.Button`,`sap.m.Table > sap.m.Button` | ❌       | use playwright selector nesting instead (`ui5=sap.m.Table >> ui5=sap.m.Button`)                   |
-| pseudo-classes      | `sap.m.Table:has(sap.m.Button)`                         | ✔        | `:has` is supported                                                                               |
+| pseudo-classes      | `sap.m.Table:has(sap.m.Button)`                         | ✔        | only `:has` is supported for now                                                                  |
 | selector lists      | `sap.m.Button,sap.m.Table`                              | ✔        |
