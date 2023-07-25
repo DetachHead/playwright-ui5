@@ -96,14 +96,18 @@ const querySelector = (root: Element | Document, selector: AstSelector): Element
     })
 
 const queryAll = (root: Element | Document, selector: string): Element[] => {
-    const parsedSelector = parse(selector)
-    if (selector === '') {
-        throw new Error('ui5 selector is empty')
+    try {
+        const parsedSelector = parse(selector)
+        if (selector === '') {
+            throw new Error('ui5 selector is empty')
+        }
+        if (typeof sap === 'undefined') {
+            return []
+        }
+        return querySelector(root, parsedSelector)
+    } catch (e) {
+        throw new Error(`ui5 selector engine failed on selector: "${selector}"\n\n${String(e)}`)
     }
-    if (typeof sap === 'undefined') {
-        return []
-    }
-    return querySelector(root, parsedSelector)
 }
 
 export default {

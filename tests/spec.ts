@@ -3,6 +3,7 @@ import { HasDefaultExport } from '@detachhead/ts-helpers/dist/types/misc'
 import { expect, selectors, test } from '@playwright/test'
 import { execSync } from 'child_process'
 import isCI from 'is-ci'
+import { escapeRegExp } from 'lodash'
 
 test.beforeAll(async () => {
     if (!isCI) {
@@ -114,5 +115,11 @@ test.describe('no ui5 site', () => {
             expect(page.locator('ui5=m.Table > m.Button').isVisible()).rejects.toThrow(
                 /Expected rule but ">" found/u,
             ))
+        test('includes the selector in the error message', async ({ page }) => {
+            const selector = '[asdf'
+            await expect(page.locator(`ui5=${selector}`).isVisible()).rejects.toThrow(
+                new RegExp(`selector: "${escapeRegExp(selector)}"`, 'u'),
+            )
+        })
     })
 })
