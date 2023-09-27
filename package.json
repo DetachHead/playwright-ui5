@@ -30,7 +30,7 @@
   "devDependencies": {
     "@detachhead/eslint-config": "^1.2.0",
     "@detachhead/ts-helpers": "^16.1.0",
-    "@playwright/test": "^1.35.0",
+    "@playwright/test": "^1.38.1",
     "@sapui5/ts-types": "^1.113.0",
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
     "@types/eslint": "^8.4.6",
