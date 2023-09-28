@@ -6,7 +6,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
-            - uses: actions/setup-node@v1
+            - uses: actions/setup-node@v3
               with:
                   node-version: 16.9.1
             - run: npm run setup
@@ -23,7 +23,7 @@ jobs:
         needs: build-and-test
         steps:
             - uses: actions/checkout@v1
-            - uses: actions/setup-node@v1
+            - uses: actions/setup-node@v3
               with:
                   node-version: 16.9.1
             - run: echo ::set-output name=CURRENT_VERSION::$(node -p "require(\"./package.json\").version")
