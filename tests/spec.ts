@@ -103,6 +103,20 @@ test.describe('ui5 site', () => {
                 0,
             ))
     })
+    test.describe('control with subclass', () => {
+        test.describe('exists', () => {
+            test('subclass', ({ page }) =>
+                expect(page.locator('ui5=sap.m.FlexBox::subclass')).toHaveCount(1))
+            test('same class', ({ page }) =>
+                expect(page.locator('ui5=sap.m.HBox::subclass')).toHaveCount(1))
+        })
+        test.describe("doesn't exist", () => {
+            test('no control with type', ({ page }) =>
+                expect(page.locator('ui5=sap.m.DateTimeField::subclass')).toHaveCount(0))
+            test('control exists with type but not using subclass', ({ page }) =>
+                expect(page.locator('ui5=sap.m.FlexBox')).toHaveCount(0))
+        })
+    })
 })
 
 test.describe('no ui5 site', () => {
