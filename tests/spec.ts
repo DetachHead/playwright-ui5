@@ -136,4 +136,20 @@ test.describe('no ui5 site', () => {
             )
         })
     })
+    test.describe('subclass with no tagname', () => {
+        test('wildcard', ({ page }) =>
+            expect(page.locator('ui5=*::subclass').isVisible()).rejects.toThrow(
+                new RegExp(
+                    'subclass pseudo-selector cannot be used without specifying a control type',
+                    'u',
+                ),
+            ))
+        test('nothing', ({ page }) =>
+            expect(page.locator('ui5=::subclass').isVisible()).rejects.toThrow(
+                new RegExp(
+                    'subclass pseudo-selector cannot be used without specifying a control type',
+                    'u',
+                ),
+            ))
+    })
 })

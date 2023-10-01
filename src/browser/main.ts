@@ -13,6 +13,24 @@ const getAllParents = (element: sap.ui.core.Element): string[] => {
     return getParents(element.getMetadata()).map((parent) => parent.getName())
 }
 
+const parseSelector = (selector: string): AstSelector => {
+    if (selector === '') {
+        throw new Error('ui5 selector is empty')
+    }
+    const parsedSelector = parse(selector)
+    parsedSelector.rules.forEach((rule) => {
+        if (rule.ids && rule.ids.length > 1) {
+            throw new Error('multiple ids are not supported')
+        }
+        if (rule.pseudoElement === 'subclass' && rule.tag?.type !== 'TagName') {
+            throw new Error(
+                'subclass pseudo-selector cannot be used without specifying a control type',
+            )
+        }
+    })
+    return parsedSelector
+}
+
 const parse = createParser({
     syntax: {
         combinators: [],
@@ -42,9 +60,6 @@ const querySelector = (root: Element | Document, selector: AstSelector): Element
         }
 
         const controls = sap.ui.core.Element.registry.filter((element) => {
-            if (rule.ids && rule.ids.length > 1) {
-                throw new Error('multiple ids are not supported')
-            }
             if (
                 (rule.tag?.type === 'TagName' &&
                     rule.tag.name !== element.getMetadata().getName() &&
@@ -111,10 +126,7 @@ const querySelector = (root: Element | Document, selector: AstSelector): Element
 
 const queryAll = (root: Element | Document, selector: string): Element[] => {
     try {
-        const parsedSelector = parse(selector)
-        if (selector === '') {
-            throw new Error('ui5 selector is empty')
-        }
+        const parsedSelector = parseSelector(selector)
         if (typeof sap === 'undefined') {
             return []
         }
