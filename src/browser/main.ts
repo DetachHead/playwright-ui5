@@ -1,12 +1,24 @@
 import { AstSelector, AstString, createParser } from 'css-selector-parser'
 import { throwIfUndefined } from 'throw-expression'
 
+const getAllParents = (element: sap.ui.core.Element): string[] => {
+    const getParents = (class_: sap.ui.base.Metadata): sap.ui.base.Metadata[] => {
+        // TODO: raise issue on ui5 types, this can return undefined
+        const parent = class_.getParent() as sap.ui.base.Metadata | undefined
+        if (parent !== undefined) {
+            return [class_, ...getParents(parent)]
+        }
+        return [class_]
+    }
+    return getParents(element.getMetadata()).map((parent) => parent.getName())
+}
+
 const parse = createParser({
     syntax: {
         combinators: [],
         namespace: false,
         attributes: { operators: ['=', '^=', '$=', '*=', '~=', '|='] },
-        pseudoElements: false,
+        pseudoElements: { definitions: ['subclass'] },
         pseudoClasses: { definitions: { Selector: ['has'] } },
         tag: { wildcard: true },
         ids: true,
@@ -35,7 +47,9 @@ const querySelector = (root: Element | Document, selector: AstSelector): Element
             }
             if (
                 (rule.tag?.type === 'TagName' &&
-                    rule.tag.name !== element.getMetadata().getName()) ||
+                    rule.tag.name !== element.getMetadata().getName() &&
+                    (rule.pseudoElement !== 'subclass' ||
+                        !getAllParents(element).includes(rule.tag.name))) ||
                 (rule.ids && rule.ids[0] !== element.getId())
             ) {
                 return false
