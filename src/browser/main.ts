@@ -3,7 +3,7 @@ import { throwIfUndefined } from 'throw-expression'
 
 const getAllParents = (element: sap.ui.core.Element): string[] => {
     const getParents = (class_: sap.ui.base.Metadata): sap.ui.base.Metadata[] => {
-        // TODO: raise issue on ui5 types, this can return undefined
+        // https://github.com/SAP/openui5/issues/3849
         const parent = class_.getParent() as sap.ui.base.Metadata | undefined
         if (parent !== undefined) {
             return [class_, ...getParents(parent)]
