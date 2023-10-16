@@ -1,10 +1,15 @@
 import { AstSelector, AstString, createParser } from 'css-selector-parser'
+import Metadata from 'sap/ui/base/Metadata'
+import type UI5Element from 'sap/ui/core/Element'
 import { throwIfUndefined } from 'throw-expression'
 
-const getAllParents = (element: sap.ui.core.Element): string[] => {
-    const getParents = (class_: sap.ui.base.Metadata): sap.ui.base.Metadata[] => {
-        // https://github.com/SAP/openui5/issues/3849
-        const parent = class_.getParent() as sap.ui.base.Metadata | undefined
+// @ts-expect-error https://github.com/SAP/ui5-typescript/issues/289#issuecomment-1562667387
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access -- see above
+const elementRegistry: typeof UI5Element.registry = window.sap.ui.core.Element.registry
+
+const getAllParents = (element: UI5Element): string[] => {
+    const getParents = (class_: Metadata): Metadata[] => {
+        const parent = class_.getParent()
         if (parent !== undefined) {
             return [class_, ...getParents(parent)]
         }
@@ -59,7 +64,7 @@ const querySelector = (root: Element | Document, selector: AstSelector): Element
             delete rule.classNames
         }
 
-        const controls = sap.ui.core.Element.registry.filter((element) => {
+        const controls = elementRegistry.filter((element) => {
             if (
                 (rule.tag?.type === 'TagName' &&
                     rule.tag.name !== element.getMetadata().getName() &&
