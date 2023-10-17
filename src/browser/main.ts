@@ -88,7 +88,7 @@ const querySelector = (root: Element | Document, selector: AstSelector): Element
                     '^=': actualValue.startsWith(expectedValue),
                     '$=': actualValue.endsWith(expectedValue),
                     '*=': actualValue.includes(expectedValue),
-                    '~=': actualValue.split(/\s+/u).includes(expectedValue),
+                    '~=': actualValue.trim() === expectedValue,
                     '|=': actualValue.split('-')[0] === expectedValue,
                 }[
                     throwIfUndefined(
