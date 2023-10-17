@@ -1,9 +1,15 @@
 import { SelectorEngine } from '../src/node/main'
 import { HasDefaultExport } from '@detachhead/ts-helpers/dist/types/misc'
-import { expect, selectors, test } from '@playwright/test'
+import { Page, expect, selectors, test } from '@playwright/test'
 import { execSync } from 'child_process'
 import isCI from 'is-ci'
 import { escapeRegExp } from 'lodash'
+
+const navigateToControlSample = (page: Page, lib: string, sampleId: string) =>
+    page.goto(
+        `https://ui5.sap.com/1.112.3/resources/sap/ui/documentation/sdk/index.html?sap-ui-xx-sample-id=${sampleId}&sap-ui-xx-sample-lib=${lib}&sap-ui-xx-sample-origin=.&sap-ui-xx-dk-origin=https://ui5.sap.com`,
+        { waitUntil: 'networkidle' },
+    )
 
 test.beforeAll(async () => {
     if (!isCI) {
@@ -17,13 +23,8 @@ test.beforeAll(async () => {
     )
 })
 
-test.describe('ui5 site', () => {
-    test.beforeEach(async ({ page }) => {
-        await page.goto(
-            'https://ui5.sap.com/1.112.3/resources/sap/ui/documentation/sdk/index.html?sap-ui-xx-sample-id=sap.m.sample.Button&sap-ui-xx-sample-lib=sap.m&sap-ui-xx-sample-origin=.&sap-ui-xx-dk-origin=https://ui5.sap.com',
-            { waitUntil: 'networkidle' },
-        )
-    })
+test.describe('ui5 site - button', () => {
+    test.beforeEach(({ page }) => navigateToControlSample(page, 'sap.m', 'sap.m.sample.Button'))
     test.describe('any control', () => {
         test('*', ({ page }) => expect(page.locator('ui5=*')).toHaveCount(45))
         test('id', ({ page }) => expect(page.locator('ui5=#__button1')).toHaveCount(1))
@@ -117,6 +118,15 @@ test.describe('ui5 site', () => {
                 expect(page.locator('ui5=sap.m.FlexBox')).toHaveCount(0))
         })
     })
+})
+
+test('~', async ({ page }) => {
+    await navigateToControlSample(page, 'sap.m', 'sap.m.sample.InputAssisted')
+    const control = page.locator('ui5=sap.m.Input')
+    const element = control.locator('input')
+    await element.fill('asdf ')
+    await element.blur()
+    await expect(control.and(page.locator("ui5=[value~='asdf']"))).toBeVisible()
 })
 
 test.describe('no ui5 site', () => {
