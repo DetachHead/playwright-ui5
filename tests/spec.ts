@@ -122,10 +122,14 @@ test.describe('ui5 site - button', () => {
 
 test('~', async ({ page }) => {
     await navigateToControlSample(page, 'sap.m', 'sap.m.sample.InputAssisted')
-    const control = page.locator('ui5=sap.m.Input')
-    const element = control.locator('input')
-    await element.press('asdf ')
-    await element.blur()
+    // on webkit clicking it brings up a popup with a second input box
+    const control = page.locator('ui5=sap.m.Input').last()
+    // need to click and use keyboard because on webkit the input field is readonly
+    await control.click()
+    // focus the second one
+    await control.click()
+    await page.keyboard.type('asdf ')
+    await control.press('Enter')
     await expect(control.and(page.locator("ui5=[value~='asdf']"))).toBeVisible()
 })
 
