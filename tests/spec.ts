@@ -124,7 +124,7 @@ test('~', async ({ page }) => {
     await navigateToControlSample(page, 'sap.m', 'sap.m.sample.InputAssisted')
     const control = page.locator('ui5=sap.m.Input')
     const element = control.locator('input')
-    await element.fill('asdf ')
+    await element.press('asdf ')
     await element.blur()
     await expect(control.and(page.locator("ui5=[value~='asdf']"))).toBeVisible()
 })
