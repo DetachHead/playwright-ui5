@@ -1,6 +1,11 @@
 name: test-and-publish
 on:
     - push
+
+permissions:
+    id-token: write
+    pages: write
+
 jobs:
     build-and-test:
         runs-on: ubuntu-latest
@@ -25,6 +30,17 @@ jobs:
                   name: playwright-report
                   path: playwright-report/
                   retention-days: 30
+            - uses: actions/configure-pages@v3
+              if: always()
+            - name: Upload playwright report to github pages
+              uses: actions/upload-pages-artifact@v2
+              if: always()
+              with:
+                  path: playwright-report/
+            - name: Deploy playwright report to Github Pages
+              if: always()
+              id: deployment
+              uses: actions/deploy-pages@v2
     publish:
         name: publish
         runs-on: ubuntu-latest
