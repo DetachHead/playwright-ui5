@@ -47,7 +47,7 @@ jobs:
                   preview: true
             - name: trace report url
               if: always()
-              run: echo "# [click here to view the playwright report](https://github.com/DetachHead/playwright-ui5)" >> $GITHUB_STEP_SUMMARY
+              run: echo "# [click here to view the playwright report](https://detachhead.github.io/playwright-ui5)" >> $GITHUB_STEP_SUMMARY
     publish:
         name: publish
         runs-on: ubuntu-latest
