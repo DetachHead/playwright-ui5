@@ -46,6 +46,7 @@ jobs:
                   # https://github.com/actions/deploy-pages/issues/180
                   preview: true
             - name: trace report url
+              if: always()
               run: echo "# [click here to view the playwright report](https://github.com/DetachHead/playwright-ui5)" >> $GITHUB_STEP_SUMMARY
     publish:
         name: publish
