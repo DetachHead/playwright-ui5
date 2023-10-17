@@ -42,7 +42,11 @@ jobs:
               id: deployment
               uses: actions/deploy-pages@v2
               with:
+                  # this doesnt work yet so there can only be one deployed playwright report at a time across all PRs
+                  # https://github.com/actions/deploy-pages/issues/180
                   preview: true
+            - name: trace report url
+              run: echo "# [click here to view the playwright report](https://github.com/DetachHead/playwright-ui5)" >> $GITHUB_STEP_SUMMARY
     publish:
         name: publish
         runs-on: ubuntu-latest
