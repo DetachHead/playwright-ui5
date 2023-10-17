@@ -128,8 +128,9 @@ test('~', async ({ page }) => {
     await control.click()
     // focus the second one
     await control.click()
-    await page.keyboard.type('asdf ')
-    await control.press('Enter')
+    const element = control.locator('input')
+    await element.fill('asdf ')
+    await element.blur()
     await expect(control.and(page.locator("ui5=[value~='asdf']"))).toBeVisible()
 })
 
