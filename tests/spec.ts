@@ -120,18 +120,27 @@ test.describe('ui5 site - button', () => {
     })
 })
 
-test('~', async ({ page }) => {
-    await navigateToControlSample(page, 'sap.m', 'sap.m.sample.InputAssisted')
-    // on webkit clicking it brings up a popup with a second input box
-    const control = page.locator('ui5=sap.m.Input').last()
-    // need to click and use keyboard because on webkit the input field is readonly
-    await control.click()
-    // focus the second one
-    await control.click()
-    const element = control.locator('input')
-    await element.fill('asdf ')
-    await element.blur()
-    await expect(control.and(page.locator("ui5=[value~='asdf']"))).toBeVisible()
+test.describe('ui5 site - Input', () => {
+    test.beforeEach(({ page }) =>
+        navigateToControlSample(page, 'sap.m', 'sap.m.sample.InputAssisted'),
+    )
+    test('~', async ({ page }) => {
+        // on webkit clicking it brings up a popup with a second input box
+        const control = page.locator('ui5=sap.m.Input').last()
+        // need to click and use keyboard because on webkit the input field is readonly
+        await control.click()
+        // focus the second one
+        await control.click()
+        const element = control.locator('input')
+        await element.fill('asdf ')
+        await element.blur()
+        await expect(control.and(page.locator("ui5=[value~='asdf']"))).toBeVisible()
+    })
+    test.describe(':has-label', () => {
+        test('exists', ({ page }) => expect(page.locator('ui5=:has-label(Product)')).toHaveCount(1))
+        test("doesn't exist", ({ page }) =>
+            expect(page.locator('ui5=:has-label(asdf)')).toHaveCount(0))
+    })
 })
 
 test.describe('no ui5 site', () => {

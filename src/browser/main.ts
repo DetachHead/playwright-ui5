@@ -1,4 +1,4 @@
-import { AstSelector, AstString, createParser } from 'css-selector-parser'
+import { AstPseudoClass, AstSelector, AstString, createParser } from 'css-selector-parser'
 import { throwIfUndefined } from 'throw-expression'
 
 const getAllParents = (element: sap.ui.core.Element): string[] => {
@@ -37,7 +37,7 @@ const parse = createParser({
         namespace: false,
         attributes: { operators: ['=', '^=', '$=', '*=', '~=', '|='] },
         pseudoElements: { definitions: ['subclass'] },
-        pseudoClasses: { definitions: { Selector: ['has'] } },
+        pseudoClasses: { definitions: { Selector: ['has'], String: ['has-label'] } },
         tag: { wildcard: true },
         ids: true,
         // classes are actually not supported but need to enable this to support . in tag names,
@@ -99,29 +99,50 @@ const querySelector = (root: Element | Document, selector: AstSelector): Element
             })
         })
         return controls
-            .map((control) => control.getDomRef())
-            .filter((element): element is Element => {
-                if (
-                    element === null ||
-                    // on nested selectors/locators, exclude any elements from outside that scope by making sure they're present in this root:
-                    root.querySelector(`[id='${element.id}']`) === null
-                ) {
-                    return false
-                }
-                if (
-                    rule.pseudoClasses &&
-                    querySelector(
-                        element,
-                        throwIfUndefined(
-                            rule.pseudoClasses[0],
-                            '":has" pseudo-class was specified without an argument',
-                        ).argument as AstSelector,
-                    ).length === 0
-                ) {
-                    return false
-                }
-                return true
-            })
+            .map((control) => ({ control, element: control.getDomRef() }))
+            .filter(
+                (
+                    controlAndElement,
+                ): controlAndElement is { control: sap.ui.core.Element; element: Element } => {
+                    const { control, element } = controlAndElement
+                    if (
+                        element === null ||
+                        // on nested selectors/locators, exclude any elements from outside that scope by making sure they're present in this root:
+                        root.querySelector(`[id='${element.id}']`) === null
+                    ) {
+                        return false
+                    }
+                    for (const pseudoClass of rule.pseudoClasses ?? []) {
+                        const getArgument = <T extends AstPseudoClass['argument']>() =>
+                            throwIfUndefined(
+                                pseudoClass,
+                                `":${pseudoClass.name} pseudo-class was specified without an argument`,
+                            ).argument as T
+                        switch (pseudoClass.name) {
+                            case 'has':
+                                if (
+                                    querySelector(element, getArgument<AstSelector>()).length === 0
+                                ) {
+                                    return false
+                                }
+                                break
+                            case 'has-label': {
+                                const labelToFind = getArgument<AstString>().value
+                                if (
+                                    !(control instanceof sap.m.InputBase) ||
+                                    !control
+                                        .getLabels()
+                                        .find((label) => label.getProperty('text') === labelToFind)
+                                ) {
+                                    return false
+                                }
+                            }
+                        }
+                    }
+                    return true
+                },
+            )
+            .map(({ element }) => element)
     })
 
 const queryAll = (root: Element | Document, selector: string): Element[] => {
