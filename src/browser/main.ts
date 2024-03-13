@@ -127,7 +127,8 @@ const querySelector = (root: Element | Document, selector: AstSelector): Element
 const queryAll = (root: Element | Document, selector: string): Element[] => {
     try {
         const parsedSelector = parseSelector(selector)
-        if (typeof sap === 'undefined') {
+        // handling for if the page is not ui5. sap webgui also uses a global sap object so we need to check for sap.ui specifically
+        if (typeof sap === 'undefined' || typeof sap.ui === 'undefined') {
             return []
         }
         return querySelector(root, parsedSelector)
