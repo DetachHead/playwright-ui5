@@ -3,6 +3,7 @@
         "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
         "mhutchie.git-graph",
-        "ms-playwright.playwright"
+        "ms-playwright.playwright",
+        "github.vscode-github-actions"
     ]
 }
