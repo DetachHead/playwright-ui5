@@ -135,9 +135,19 @@ test('~', async ({ page }) => {
 })
 
 test.describe('no ui5 site', () => {
-    test('no ui5', async ({ page }) => {
-        await page.setContent('<div></div>')
-        await expect(page.locator('ui5=m.Button')).toHaveCount(0)
+    test.describe('page has no ui5', () => {
+        test('no global sap object', async ({ page }) => {
+            await page.setContent('<div></div>')
+            await expect(page.locator('ui5=m.Button')).toHaveCount(0)
+        })
+        test('no sap.ui object', async ({ page }) => {
+            await page.setContent('<div></div>')
+            await page.evaluate(() => {
+                // @ts-expect-error https://github.com/microsoft/TypeScript/issues/43434
+                window.sap = {}
+            })
+            await expect(page.locator('ui5=m.Button')).toHaveCount(0)
+        })
     })
     test.describe('unsupported syntax', () => {
         test('comparitors', ({ page }) =>
