@@ -75,7 +75,7 @@ jobs:
               run: npm version ${{ steps.current-version.outputs.CURRENT_VERSION }}-$GITHUB_SHA --git-tag-version false
             - name: canary publish
               if: github.ref != 'refs/heads/master'
-              uses: JS-DevTools/npm-publish@v1
+              uses: JS-DevTools/npm-publish@v3
               with:
                   token: ${{ secrets.NPM_TOKEN }}
                   access: public
@@ -84,7 +84,7 @@ jobs:
             # publish & github release if master, and the version in package.json was changed
             - name: publish
               if: github.ref == 'refs/heads/master' && steps.version-was-changed.outputs.VERSION_INFO == ''
-              uses: JS-DevTools/npm-publish@v1
+              uses: JS-DevTools/npm-publish@v3
               with:
                   token: ${{ secrets.NPM_TOKEN }}
                   access: public
