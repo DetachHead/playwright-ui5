@@ -28,25 +28,25 @@
     "url": "https://github.com/DetachHead/playwright-ui5.git"
   },
   "devDependencies": {
-    "@detachhead/eslint-config": "^1.2.0",
+    "@detachhead/eslint-config": "^1.5.0",
     "@detachhead/ts-helpers": "^16.1.0",
-    "@playwright/test": "^1.39.0",
+    "@playwright/test": "^1.43.0",
     "@sapui5/ts-types": "^1.113.0",
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
     "@types/eslint": "^8.4.6",
     "@types/is-ci": "^3.0.0",
-    "@types/node": "^18.16.1",
+    "@types/node": "^20.12.6",
     "@types/three": "^0.150.2",
     "esbuild": "^0.15.5",
     "is-ci": "^3.0.1",
     "prettier": "^2.8.8",
     "rimraf": "^3.0.2",
-    "typescript": "^4.7.4"
+    "typescript": "^5.4.4"
   },
   "dependencies": {
     "css-selector-parser": "^2",
     "lodash": "^4.17.21",
-    "playwright-core": "^1.33.0",
+    "playwright-core": "^1.43.0",
     "throw-expression": "^1.0.2"
   },
   "//": "https://github.com/trivago/prettier-plugin-sort-imports/issues/204#issuecomment-1431287240",
