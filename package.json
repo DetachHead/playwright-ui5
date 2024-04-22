@@ -31,7 +31,7 @@
     "@detachhead/eslint-config": "^1.5.0",
     "@detachhead/ts-helpers": "^16.1.0",
     "@playwright/test": "^1.43.0",
-    "@sapui5/ts-types": "^1.113.0",
+    "@sapui5/ts-types-esm": "^1.123.1",
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
     "@types/eslint": "^8.4.6",
     "@types/is-ci": "^3.0.0",

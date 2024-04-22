@@ -1,5 +1,26 @@
 import { AstSelector, AstString, createParser } from 'css-selector-parser'
+import UI5Metadata from 'sap/ui/base/Metadata'
+import UI5Element from 'sap/ui/core/Element'
 import { throwIfUndefined } from 'throw-expression'
+
+/* eslint-disable @typescript-eslint/no-namespace -- see comment below */
+declare global {
+    // using @sapui5/ts-types-esm instead of @sapui5/ts-types even though we are
+    // accessing the ui5 api globally because @sapui5/ts-types is deprecated and
+    // they keep breaking things with each release. so it's easier to just use the
+    // more supported esm package and declare the global namespaces ourselves. see
+    // https://github.com/SAP/ui5-typescript/issues/289#issuecomment-1562667387
+
+    // ideally these would be defined like `const Element = Ui5Element` instead of
+    // these fake subclasses. see https://github.com/microsoft/TypeScript/issues/36348
+    namespace sap.ui.core {
+        class Element extends UI5Element {}
+    }
+    namespace sap.ui.base {
+        class Metadata extends UI5Metadata {}
+    }
+}
+/* eslint-enable @typescript-eslint/no-namespace */
 
 const getAllParents = (element: sap.ui.core.Element): string[] => {
     const getParents = (class_: sap.ui.base.Metadata): sap.ui.base.Metadata[] => {
@@ -59,6 +80,7 @@ const querySelector = (root: Element | Document, selector: AstSelector): Element
             delete rule.classNames
         }
 
+        // eslint-disable-next-line detachhead/suggestions-as-errors -- using the deprecated registry since we still want to support older ui5 versions
         const controls = sap.ui.core.Element.registry.filter((element) => {
             if (
                 (rule.tag?.type === 'TagName' &&
