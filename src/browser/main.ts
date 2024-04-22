@@ -24,8 +24,7 @@ declare global {
 
 const getAllParents = (element: sap.ui.core.Element): string[] => {
     const getParents = (class_: sap.ui.base.Metadata): sap.ui.base.Metadata[] => {
-        // https://github.com/SAP/openui5/issues/3849
-        const parent = class_.getParent() as sap.ui.base.Metadata | undefined
+        const parent = class_.getParent()
         if (parent !== undefined) {
             return [class_, ...getParents(parent)]
         }
