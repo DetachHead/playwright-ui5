@@ -6,10 +6,11 @@ import isCI from 'is-ci'
  * See https://playwright.dev/docs/test-configuration.
  */
 const config: PlaywrightTestConfig = {
+    globalSetup: require.resolve('./tests/globalSetup'),
     testDir: './tests',
-    testMatch: /.*\.ts/u,
+    testMatch: /.*\.spec\.ts/u,
     /* Maximum time one test can run for. */
-    timeout: 3 * 60 * 1000,
+    timeout: 30 * 60 * 1000,
     expect: {
         /**
          * Maximum time expect() should wait for the condition to be met.
@@ -30,6 +31,7 @@ const config: PlaywrightTestConfig = {
 
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         trace: 'on',
+        headless: isCI,
     },
 
     /* Configure projects for major browsers */

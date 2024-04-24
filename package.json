@@ -12,8 +12,7 @@
     "lint:fix": "npm run lint:check -- --fix",
     "format:check": "prettier --check .",
     "format:fix": "prettier --write .",
-    "_esbuild": "tsc -p src/browser/tsconfig.json && esbuild src/browser/main.ts --bundle --define:global=window",
-    "build:browser": "npm run _esbuild -- --format=cjs --outdir=dist/browser",
+    "build:browser": "tsc -p src/browser/tsconfig.json && esbuild src/browser/css.ts --bundle --define:global=window --format=cjs --outdir=dist/browser && esbuild src/browser/xpath.ts --bundle --define:global=window --format=cjs --outdir=dist/browser",
     "build:node": "tsc -p src/node/tsconfig.json",
     "typecheck:config-files": "tsc",
     "build": "rimraf ./dist && npm run build:browser && npm run build:node",
@@ -29,12 +28,12 @@
   },
   "devDependencies": {
     "@detachhead/eslint-config": "^1.5.0",
-    "@detachhead/ts-helpers": "^16.1.0",
     "@playwright/test": "^1.43.0",
     "@sapui5/ts-types-esm": "^1.123.1",
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
     "@types/eslint": "^8.4.6",
     "@types/is-ci": "^3.0.0",
+    "@types/lodash": "^4.17.0",
     "@types/node": "^20.12.6",
     "@types/three": "^0.150.2",
     "esbuild": "^0.15.5",
@@ -45,9 +44,11 @@
   },
   "dependencies": {
     "css-selector-parser": "^2",
+    "fontoxpath": "^3.30.3",
     "lodash": "^4.17.21",
     "playwright-core": "^1.43.0",
-    "throw-expression": "^1.0.2"
+    "throw-expression": "^1.0.2",
+    "xmlbuilder2": "^3.1.1"
   },
   "//": "https://github.com/trivago/prettier-plugin-sort-imports/issues/204#issuecomment-1431287240",
   "overrides": {

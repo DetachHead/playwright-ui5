@@ -1,26 +1,6 @@
+import { SelectorEngine, Ui5SelectorEngineError, isUi5 } from './common'
 import { AstSelector, AstString, createParser } from 'css-selector-parser'
-import UI5Metadata from 'sap/ui/base/Metadata'
-import UI5Element from 'sap/ui/core/Element'
 import { throwIfUndefined } from 'throw-expression'
-
-/* eslint-disable @typescript-eslint/no-namespace -- see comment below */
-declare global {
-    // using @sapui5/ts-types-esm instead of @sapui5/ts-types even though we are
-    // accessing the ui5 api globally because @sapui5/ts-types is deprecated and
-    // they keep breaking things with each release. so it's easier to just use the
-    // more supported esm package and declare the global namespaces ourselves. see
-    // https://github.com/SAP/ui5-typescript/issues/289#issuecomment-1562667387
-
-    // ideally these would be defined like `const Element = Ui5Element` instead of
-    // these fake subclasses. see https://github.com/microsoft/TypeScript/issues/36348
-    namespace sap.ui.core {
-        class Element extends UI5Element {}
-    }
-    namespace sap.ui.base {
-        class Metadata extends UI5Metadata {}
-    }
-}
-/* eslint-enable @typescript-eslint/no-namespace */
 
 const getAllParents = (element: sap.ui.core.Element): string[] => {
     const getParents = (class_: sap.ui.base.Metadata): sap.ui.base.Metadata[] => {
@@ -149,17 +129,16 @@ const queryAll = (root: Element | Document, selector: string): Element[] => {
     try {
         const parsedSelector = parseSelector(selector)
         // handling for if the page is not ui5. sap webgui also uses a global sap object so we need to check for sap.ui specifically
-        if (typeof sap === 'undefined' || typeof sap.ui === 'undefined') {
+        if (!isUi5()) {
             return []
         }
         return querySelector(root, parsedSelector)
     } catch (e) {
-        throw new Error(`ui5 selector engine failed on selector: "${selector}"\n\n${String(e)}`)
+        throw new Ui5SelectorEngineError(selector, e)
     }
 }
 
 export default {
     queryAll,
-    query: (root: Element | Document, selector: string): Element | undefined =>
-        queryAll(root, selector)[0],
-}
+    query: (root, selector) => queryAll(root, selector)[0],
+} satisfies SelectorEngine
