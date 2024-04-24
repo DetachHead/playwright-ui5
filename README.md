@@ -1,6 +1,6 @@
 # playwright ui5
 
-a playwright [custom selector engine](https://playwright.dev/docs/extensibility#custom-selector-engines) for [sapui5](https://ui5.sap.com/)
+playwright [custom selector engines](https://playwright.dev/docs/extensibility#custom-selector-engines) for [sapui5](https://ui5.sap.com/)
 
 ## installation
 
@@ -10,12 +10,16 @@ npm install playwright-ui5
 
 ## usage
 
+playwright-ui5 contains a selector engine for both css and xpath syntax. you can use whichever one you want, but the xpath one is more flexible since not all css selector syntax has been implemented yet.
+
+### css selector engine
+
 ```ts
 import { selectors, test } from '@playwright/test'
-import ui5 from 'playwright-ui5'
+import { css } from 'playwright-ui5'
 
 test.beforeAll(async () => {
-    await selectors.register('ui5', ui5)
+    await selectors.register('ui5', css)
 })
 
 test('ui5 example', ({ page }) => {
@@ -24,9 +28,9 @@ test('ui5 example', ({ page }) => {
 })
 ```
 
-## syntax
+#### syntax
 
-this selector engine uses css selector-like syntax. the main difference is that `.` is not used for class names, rather they are treated as part of the type name (ie. `sap.m.Button`)
+the main difference between regular CSS selectors and playwright-ui5's syntax is is that `.` is not used for class names, rather they are treated as part of the type name (ie. `sap.m.Button`).
 
 | feature             | examples                                                   | suported | notes                                                                                                                                         |
 | ------------------- | ---------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -38,3 +42,41 @@ this selector engine uses css selector-like syntax. the main difference is that 
 | pseudo-classes      | `sap.m.Table:has(sap.m.Button)`                            | ✔        | only `:has` is supported for now                                                                                                              |
 | pseudo-elements     | `sap.m.DateTimeField::subclass`                            | ✔        | `::subclass` will match the specified control type and any subtypes (eg. both `sap.m.DateTimeField` and subtypes like `sap.m.DatePicker`)     |
 | selector lists      | `sap.m.Button,sap.m.Table`                                 | ✔        |
+
+### xpath selector engine
+
+```ts
+import { selectors, test } from '@playwright/test'
+import { xpath } from 'playwright-ui5'
+
+test.beforeAll(async () => {
+    await selectors.register('ui5', xpath)
+})
+
+test('ui5 example', ({ page }) => {
+    await page.goto('https://ui5.sap.com/')
+    await page.click("ui5=//sap.m.Button[ui5:property(., 'text')='Get Started with UI5']")
+})
+```
+
+#### syntax
+
+unlike the CSS selector syntax, all xpath syntax is supported (even newer xpath features up to version 3.1 thanks to [fontoxpath](https://github.com/FontoXML/fontoxpath)).
+
+note that properties cannot be accessed via the `@attribute` syntax. this is because the selector engine needs to build an XML tree of all the ui5 elements on the page, and for performance reasons the properties are not evaluated during this step, so the only attribute that can be accessed like that is the element's ID.
+
+for example, for a button with the id `"foo"` and the text `"bar"`, the xml view may look like this:
+
+```xml
+<sap.m.Page id="__page0">
+    <sap.m.Button id="foo"></sap.m.Button>
+</sap.m.Page>
+```
+
+in this case, `//sap.m.Button[@id='foo']` will work, but `//sap.m.Button[@text='bar']` will not. to access the property, you can use the `ui5:property` xpath function, like so:
+
+```xpath
+//sap.m.Button[ui5:property(., 'text')='bar']
+```
+
+the XML view matches the control tree from the [ui5 diagnostics window](https://sapui5.hana.ondemand.com/sdk/#/topic/04b75eae78ef4bae9b40cd7540ae8bdc) and the [ui5 inspector chrome extension](https://chromewebstore.google.com/detail/ui5-inspector/bebecogbafbighhaildooiibipcnbngo), so we recommend using one of these when working with the ui5 xpath selector enging.
