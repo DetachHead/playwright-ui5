@@ -8,10 +8,10 @@ test.beforeEach(({ page }) => fixDefaultTimeout(page))
 test.describe('ui5 site - button', () => {
     test.beforeEach(({ page }) => navigateToControlSample(page, 'sap.m', 'sap.m.sample.Button'))
     test.describe('any control', () => {
-        test('*', async ({ page }) => expect(page.locator('ui5_xpath=//*')).toHaveCount(43))
+        test('*', ({ page }) => expect(page.locator('ui5_xpath=//*')).toHaveCount(43))
         test('id', ({ page }) =>
             expect(page.locator('ui5_xpath=//*[@id="__button1"]')).toHaveCount(1))
-        test('property', async ({ page }) =>
+        test('property', ({ page }) =>
             expect(page.locator('ui5_xpath=//*[not(ui5:property(., "text")="")]')).toHaveCount(21))
     })
     test('interaction', async ({ page }) => {

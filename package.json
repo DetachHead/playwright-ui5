@@ -40,7 +40,7 @@
     "is-ci": "^3.0.1",
     "prettier": "^2.8.8",
     "rimraf": "^3.0.2",
-    "typescript": "^5.5.0-beta"
+    "typescript": "5.5.0-dev.20240429"
   },
   "dependencies": {
     "css-selector-parser": "^2",
@@ -50,12 +50,18 @@
     "throw-expression": "^1.0.2",
     "xmlbuilder2": "^3.1.1"
   },
-  "//": "https://github.com/trivago/prettier-plugin-sort-imports/issues/204#issuecomment-1431287240",
+  "//": [
+    "https://github.com/trivago/prettier-plugin-sort-imports/issues/204#issuecomment-1431287240",
+    "https://github.com/DetachHead/eslint-plugin-detachhead/blob/master/docs/rules/suggestions-as-errors.md#troubleshooting"
+  ],
   "overrides": {
     "@trivago/prettier-plugin-sort-imports": {
       "@babel/core": "7.20.12",
       "@babel/parser": "7.20.15",
       "@babel/traverse": "7.20.13"
+    },
+    "typescript": {
+      ".": "5.5.0-dev.20240429"
     }
   }
 }
