@@ -5,7 +5,7 @@ import {
     evaluateXPathToNodes,
     registerCustomXPathFunction,
 } from 'fontoxpath'
-import { throwIfNull, throwIfUndefined } from 'throw-expression'
+import { throwIfUndefined } from 'throw-expression'
 import { create } from 'xmlbuilder2'
 
 interface TreeModelNode {
@@ -96,10 +96,9 @@ const getRootElement = (node: Element | Document) =>
 const createXmlDom = (node: Element) => new DOMParser().parseFromString(createXml(node), 'text/xml')
 
 const matchXmlElementToHtmlElement = (root: Element | Document, element: Element) =>
-    throwIfNull(
-        root.querySelector(`[id='${element.id}']`),
-        `failed to match element for id: ${element.id}`,
-    )
+    // this should always match an element, but there seems to be a timing issue in firefox while
+    // the ui5 site is loading where there's an element with an empty id
+    root.querySelector(`[id='${element.id}']`) ?? undefined
 
 export default {
     queryAll: (root, selector) => {
@@ -111,13 +110,9 @@ export default {
             if (node === null) {
                 return []
             }
-            return evaluateXPathToNodes<Element>(
-                selector,
-                createXmlDom(node),
-                null,
-                null,
-                options,
-            ).map((element) => matchXmlElementToHtmlElement(root, element))
+            return evaluateXPathToNodes<Element>(selector, createXmlDom(node), null, null, options)
+                .map((element) => matchXmlElementToHtmlElement(root, element))
+                .filter((element) => element !== undefined)
         } catch (e) {
             throw new Ui5SelectorEngineError(selector, e)
         }
