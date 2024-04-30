@@ -63,7 +63,7 @@ test('ui5 example', ({ page }) => {
 
 unlike the CSS selector syntax, all xpath syntax is supported (even newer xpath features up to version 3.1 thanks to [fontoxpath](https://github.com/FontoXML/fontoxpath)).
 
-note that properties cannot be accessed via the `@attribute` syntax. this is because the selector engine needs to build an XML tree of all the ui5 elements on the page, and for performance reasons the properties are not evaluated during this step, so the only attribute that can be accessed like that is the element's ID.
+note that properties cannot be accessed via the `@attribute` syntax. this is because the selector engine needs to build an XML tree of all the ui5 elements on the page, and for performance reasons the properties are not evaluated during this step, so the only attribute that can be accessed that way is the element's ID.
 
 for example, for a button with the id `"foo"` and the text `"bar"`, the xml view may look like this:
 
@@ -73,10 +73,63 @@ for example, for a button with the id `"foo"` and the text `"bar"`, the xml view
 </sap.m.Page>
 ```
 
-in this case, `//sap.m.Button[@id='foo']` will work, but `//sap.m.Button[@text='bar']` will not. to access the property, you can use the `ui5:property` xpath function, like so:
+in this case, `//sap.m.Button[@id='foo']` will work, but `//sap.m.Button[@text='bar']` will not. to access the property, you can use the [`ui5:property`](#ui5property) xpath function instead, like so:
 
 ```xpath
 //sap.m.Button[ui5:property(., 'text')='bar']
 ```
 
 the XML view matches the control tree from the [ui5 diagnostics window](https://sapui5.hana.ondemand.com/sdk/#/topic/04b75eae78ef4bae9b40cd7540ae8bdc) and the [ui5 inspector chrome extension](https://chromewebstore.google.com/detail/ui5-inspector/bebecogbafbighhaildooiibipcnbngo), so we recommend using one of these when working with the ui5 xpath selector enging.
+
+#### the root node
+
+since the ui5 control tree can have multiple root nodes, the xpath selector engine wraps `sap-ui-area` nodes inside a `root` node:
+
+```xml
+<root>
+    <sap-ui-area id="sap-ui-static">
+        <sap.m.Page id="__page0">
+            <sap.m.Button id="foo"></sap.m.Button>
+        </sap.m.Page>
+    </sap-ui-area>
+    <sap-ui-area id="canvas">
+</root>
+```
+
+#### API
+
+the following xpath functions are available in the `ui5:` namespace:
+
+##### `ui5:property`
+
+-   **arguments:** `element()`, `xs:string`
+-   **return type:** `xs:string`
+
+gets the value for the property with the specified name from the specified element
+
+```xpath
+//sap.m.Button[ui5:property(., "text")="Click here"]
+```
+
+##### `ui5:debug-xml`
+
+-   **arguments:** `element()`
+-   **return type:** `xs:string`
+
+raises an exception containining the XML control tree with the specified element as the root. this function is only intended for debugging purposes.
+
+```xpath
+ui5:debug-xml(root)
+```
+
+this will throw an exception containing the entire control tree for the page in XML format:
+
+```
+playwright-ui5 debug-xml function was called. here is the XML element tree:
+
+<root>
+    <sap-ui-area id="sap-ui-static">
+        <!-- ... -->
+    </sap-ui-area>
+</root>
+```
