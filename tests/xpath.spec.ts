@@ -1,31 +1,58 @@
-import { fixDefaultTimeout, navigateToControlSample, registerSelectorEngine } from './testUtils'
+import {
+    fixDefaultTimeout,
+    navigateToControlSample,
+    navigateToUi5DocsPage,
+    registerSelectorEngine,
+} from './testUtils'
 import { expect, test } from '@playwright/test'
 import { escapeRegExp } from 'lodash'
 
 test.beforeAll(() => registerSelectorEngine('xpath'))
 test.beforeEach(({ page }) => fixDefaultTimeout(page))
 
-test.describe('ui5 site - button', () => {
-    test.beforeEach(({ page }) => navigateToControlSample(page, 'sap.m', 'sap.m.sample.Button'))
-    test.describe('any control', () => {
-        test('*', ({ page }) => expect(page.locator('ui5_xpath=//*')).toHaveCount(43))
-        test('id', ({ page }) =>
-            expect(page.locator('ui5_xpath=//*[@id="__button1"]')).toHaveCount(1))
-        test('property', ({ page }) =>
-            expect(page.locator('ui5_xpath=//*[not(ui5:property(., "text")="")]')).toHaveCount(21))
+test.describe('ui5 site', () => {
+    test.describe('control samples', () => {
+        test.beforeEach(({ page }) => navigateToControlSample(page, 'sap.m', 'sap.m.sample.Button'))
+        test.describe('any control', () => {
+            test('*', ({ page }) => expect(page.locator('ui5_xpath=//*')).toHaveCount(43))
+            test('id', ({ page }) =>
+                expect(page.locator('ui5_xpath=//*[@id="__button1"]')).toHaveCount(1))
+            test('property', ({ page }) =>
+                expect(page.locator('ui5_xpath=//*[not(ui5:property(., "text")="")]')).toHaveCount(
+                    21,
+                ))
+        })
+        test('interaction', async ({ page }) => {
+            await page.click('ui5_xpath=//sap.m.Button[ui5:property(.,"text")="Accept"]')
+            await expect(page.getByText('__button6 Pressed')).toBeVisible()
+        })
+        test('not found', ({ page }) =>
+            expect(page.locator('ui5_xpath=//sap.m.asdf')).toHaveCount(0))
+        test('includes the selector in the error message', async ({ page }) => {
+            // ideally we shouldn't need the site here, but fontoxpath needs to build the xml from ui5 before it can validate the xpath
+            await navigateToControlSample(page, 'sap.m', 'sap.m.sample.Button')
+            const selector = '\\%(&*)^%*)[asdf'
+            await expect(page.locator(`ui5_xpath=${selector}`).isVisible()).rejects.toThrow(
+                new RegExp(`selector: "${escapeRegExp(selector)}"`, 'u'),
+            )
+        })
+        test('debug-xml function', ({ page }) =>
+            expect(page.locator('ui5_xpath=ui5:debug-xml(root)').isVisible()).rejects.toThrow(
+                new RegExp(escapeRegExp('<sap.ui.core.ComponentContainer id="__container0">'), 'u'),
+            ))
     })
-    test('interaction', async ({ page }) => {
-        await page.click('ui5_xpath=//sap.m.Button[ui5:property(.,"text")="Accept"]')
-        await expect(page.getByText('__button6 Pressed')).toBeVisible()
-    })
-    test('not found', ({ page }) => expect(page.locator('ui5_xpath=//sap.m.asdf')).toHaveCount(0))
-    test('includes the selector in the error message', async ({ page }) => {
-        // ideally we shouldn't need the site here, but fontoxpath needs to build the xml from ui5 before it can validate the xpath
-        await navigateToControlSample(page, 'sap.m', 'sap.m.sample.Button')
-        const selector = '\\%(&*)^%*)[asdf'
-        await expect(page.locator(`ui5_xpath=${selector}`).isVisible()).rejects.toThrow(
-            new RegExp(`selector: "${escapeRegExp(selector)}"`, 'u'),
-        )
+    test.describe('demo apps', () => {
+        test('multiple root nodes', async ({ page }) => {
+            await navigateToUi5DocsPage(
+                page,
+                '/test-resources/sap/m/demokit/cart/webapp/index.html?sap-ui-theme=sap_horizon_dark',
+            )
+            await expect(
+                page.locator(
+                    'ui5_xpath=//sap.m.List[@id="container-cart---homeView--categoryList"]',
+                ),
+            ).toBeVisible()
+        })
     })
 })
 

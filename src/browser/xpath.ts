@@ -57,6 +57,10 @@ const createTreeModelNodes = (node: Element) => {
 
 const createXmlFromTreeNodes = (treeModelNodes: TreeModelNode[]) => {
     let xml = create({ version: '1.0' })
+    // need to create a top level "root" node because xml doesn't support multiple root nodes
+    if (treeModelNodes[0]?.name === 'sap-ui-area') {
+        xml = xml.ele('root')
+    }
     const inner = (nodes: TreeModelNode[]) => {
         nodes.forEach((node) => {
             xml = xml.ele(node.name, { id: node.id })
@@ -71,8 +75,10 @@ const createXmlFromTreeNodes = (treeModelNodes: TreeModelNode[]) => {
 const createXml = (nodeElement: Element) =>
     createXmlFromTreeNodes(createTreeModelNodes(nodeElement))
 
+const namespaceURI = 'ui5'
+
 registerCustomXPathFunction(
-    { namespaceURI: 'ui5', localName: 'property' },
+    { namespaceURI, localName: 'property' },
     ['element()', 'xs:string'],
     'item()',
     (_, element: Element, name: string) => {
@@ -89,7 +95,21 @@ registerCustomXPathFunction(
     },
 )
 
-const options: Options = { namespaceResolver: (prefix) => (prefix === 'ui5' ? prefix : null) }
+registerCustomXPathFunction(
+    { namespaceURI, localName: 'debug-xml' },
+    ['element()'],
+    'xs:string', // actually returns never but i doubt xpath has a type for such a thing
+    (_, element: Element) => {
+        // we throw an exception instead of just logging it to prevent users from accidentally leaving debug code in their tests
+        throw new Error(
+            `playwright-ui5 debug-xml function was called. here is the XML element tree:\n\n${element.outerHTML}`,
+        )
+    },
+)
+
+const options: Options = {
+    namespaceResolver: (prefix) => (prefix === namespaceURI ? prefix : null),
+}
 
 const getRootElement = (node: Element | Document) =>
     node instanceof Element ? node : node.querySelector('*')
