@@ -111,6 +111,9 @@ gets the value for the property with the specified name from the specified eleme
 //sap.m.Button[ui5:property(., "text")="Click here"]
 ```
 
+> [!NOTE]  
+> currently, due to [a limitation in fontoxpath (or xpath itself, i'm not sure)](https://github.com/FontoXML/fontoxpath/issues/636), properties are always converted to strings before they are returned. if the property does not exist or its value is `null` or `undefined`, then an empty string is returned instead.
+
 ##### `ui5:debug-xml`
 
 -   **arguments:** `element()`
