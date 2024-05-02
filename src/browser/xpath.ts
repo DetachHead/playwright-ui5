@@ -80,7 +80,7 @@ const namespaceURI = 'ui5'
 registerCustomXPathFunction(
     { namespaceURI, localName: 'property' },
     ['element()', 'xs:string'],
-    'item()',
+    'item()*',
     (_, element: Element, name: string) => {
         const id = element.getAttribute('id')
         // eslint-disable-next-line detachhead/suggestions-as-errors -- using deprecated byId method to support older ui5 versions
@@ -91,7 +91,13 @@ registerCustomXPathFunction(
         } catch {
             // intentionally empty
         }
-        return result?.toString() ?? ''
+        if (Array.isArray(result)) {
+            return result as unknown[]
+        }
+        if (result === undefined || result === null) {
+            return []
+        }
+        return [result]
     },
 )
 

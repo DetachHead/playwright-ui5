@@ -17,10 +17,28 @@ test.describe('ui5 site', () => {
             test('*', ({ page }) => expect(page.locator('ui5_xpath=//*')).toHaveCount(43))
             test('id', ({ page }) =>
                 expect(page.locator('ui5_xpath=//*[@id="__button1"]')).toHaveCount(1))
-            test('property', ({ page }) =>
-                expect(page.locator('ui5_xpath=//*[not(ui5:property(., "text")="")]')).toHaveCount(
-                    21,
-                ))
+            test.describe('ui5:property function', () => {})
+            test('nullish property', ({ page }) =>
+                expect(page.locator('ui5_xpath=//*[ui5:property(., "text")]')).toHaveCount(21))
+            test.describe('boolean property', () => {
+                test('true', ({ page }) =>
+                    expect(
+                        page.locator('ui5_xpath=//sap.m.Button[ui5:property(., "enabled")]'),
+                    ).toHaveCount(11))
+                test('false', async ({ page }) => {
+                    const button = page.locator(
+                        'ui5_xpath=//sap.m.Button[not(ui5:property(., "enabled"))]',
+                    )
+                    await expect(button).toHaveCount(1)
+                    await expect(button).toHaveId('__button8')
+                })
+            })
+            test('number property', ({ page }) =>
+                expect(
+                    page.locator(
+                        'ui5_xpath=//sap.m.Button[@id="__button2" and ui5:property(.,"busyIndicatorDelay")=1000]',
+                    ),
+                ).toHaveCount(1))
         })
         test('interaction', async ({ page }) => {
             await page.click('ui5_xpath=//sap.m.Button[ui5:property(.,"text")="Accept"]')
