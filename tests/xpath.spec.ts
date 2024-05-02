@@ -54,10 +54,12 @@ test.describe('ui5 site', () => {
                 new RegExp(`selector: "${escapeRegExp(selector)}"`, 'u'),
             )
         })
-        test('debug-xml function', ({ page }) =>
-            expect(page.locator('ui5_xpath=ui5:debug-xml(root)').isVisible()).rejects.toThrow(
+        test('debug-xml function', async ({ page }) => {
+            await page.locator('ui5_xpath=//*').first().waitFor()
+            await expect(page.locator('ui5_xpath=ui5:debug-xml(root)').isVisible()).rejects.toThrow(
                 new RegExp(escapeRegExp('<sap.ui.core.ComponentContainer id="__container0">'), 'u'),
-            ))
+            )
+        })
     })
     test.describe('demo apps', () => {
         test('multiple root nodes', async ({ page }) => {
