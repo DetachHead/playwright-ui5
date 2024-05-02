@@ -79,7 +79,7 @@ in this case, `//sap.m.Button[@id='foo']` will work, but `//sap.m.Button[@text='
 //sap.m.Button[ui5:property(., 'text')='bar']
 ```
 
-the XML view matches the control tree from the [ui5 diagnostics window](https://sapui5.hana.ondemand.com/sdk/#/topic/04b75eae78ef4bae9b40cd7540ae8bdc) and the [ui5 inspector chrome extension](https://chromewebstore.google.com/detail/ui5-inspector/bebecogbafbighhaildooiibipcnbngo), so we recommend using one of these when working with the ui5 xpath selector enging.
+the XML view matches the control tree from the [ui5 diagnostics window](https://sapui5.hana.ondemand.com/sdk/#/topic/04b75eae78ef4bae9b40cd7540ae8bdc) and the [ui5 inspector chrome extension](https://chromewebstore.google.com/detail/ui5-inspector/bebecogbafbighhaildooiibipcnbngo), so we recommend using one of these when working with the ui5 xpath selector engine.
 
 #### the root node
 
@@ -114,7 +114,7 @@ gets the value for the property with the specified name from the specified eleme
 ##### `ui5:debug-xml`
 
 -   **arguments:** `element()`
--   **return type:** `xs:string`
+-   **return type:** N/A (always throws an exception)
 
 raises an exception containining the XML control tree with the specified element as the root. this function is only intended for debugging purposes.
 
