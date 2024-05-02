@@ -52,6 +52,13 @@ jobs:
         name: publish
         runs-on: ubuntu-latest
         needs: build-and-test
+        # https://github.com/marvinpinto/actions/issues/340#issuecomment-983254674
+        permissions:
+            id-token: write
+            pages: write
+            contents: write
+            packages: write
+            pull-requests: read
         steps:
             - uses: actions/checkout@v1
             - uses: actions/setup-node@v3
