@@ -55,9 +55,8 @@ const createTreeModelNodes = (node: Element) => {
     return result
 }
 
-const createXmlFromTreeNodes = (treeModelNodes: TreeModelNode[]) => {
+const createXmlFromTreeNode = (treeModelNode: TreeModelNode) => {
     let xml = create({ version: '1.0' })
-    // need to create a top level "root" node because xml doesn't support multiple root nodes
     const inner = (nodes: TreeModelNode[]) => {
         nodes.forEach((node) => {
             xml = xml.ele(node.name, { id: node.id })
@@ -65,12 +64,12 @@ const createXmlFromTreeNodes = (treeModelNodes: TreeModelNode[]) => {
             xml = xml.up()
         })
     }
-    inner(treeModelNodes)
+    inner([treeModelNode])
     return xml.end({ prettyPrint: true })
 }
 
 const createXml = (nodeElement: Element) =>
-    createXmlFromTreeNodes(createTreeModelNodes(nodeElement))
+    createTreeModelNodes(nodeElement).map(createXmlFromTreeNode)
 
 const namespaceURI = 'ui5'
 
@@ -116,7 +115,8 @@ const options: Options = {
 
 const getRootElements = (htmlNode: Element | Document) =>
     Array.from(htmlNode.childNodes).filter((childNode) => childNode instanceof Element)
-const createXmlDom = (node: Element) => new DOMParser().parseFromString(createXml(node), 'text/xml')
+const createXmlDoms = (node: Element) =>
+    createXml(node).map((xml) => new DOMParser().parseFromString(xml, 'text/xml'))
 
 const matchXmlElementToHtmlElement = (htmlRoot: Element | Document, xmlElement: Element) => {
     const result = htmlRoot.querySelector(`[id='${xmlElement.id}']`)
@@ -135,13 +135,11 @@ export default {
                 return []
             }
             return getRootElements(root).flatMap((node) =>
-                evaluateXPathToNodes<Element>(
-                    selector,
-                    createXmlDom(node),
-                    null,
-                    null,
-                    options,
-                ).flatMap((element) => matchXmlElementToHtmlElement(root, element)),
+                createXmlDoms(node)
+                    .flatMap((xmlDom) =>
+                        evaluateXPathToNodes<Element>(selector, xmlDom, null, null, options),
+                    )
+                    .flatMap((element) => matchXmlElementToHtmlElement(root, element)),
             )
         } catch (e) {
             throw new Ui5SelectorEngineError(selector, e)
@@ -153,15 +151,17 @@ export default {
                 return undefined
             }
             for (const node of getRootElements(root)) {
-                const result = evaluateXPathToFirstNode<Element>(
-                    selector,
-                    createXmlDom(node),
-                    null,
-                    null,
-                    options,
-                )
-                if (result) {
-                    return matchXmlElementToHtmlElement(root, result)[0]
+                for (const xmlDom of createXmlDoms(node)) {
+                    const result = evaluateXPathToFirstNode<Element>(
+                        selector,
+                        xmlDom,
+                        null,
+                        null,
+                        options,
+                    )
+                    if (result) {
+                        return matchXmlElementToHtmlElement(root, result)[0]
+                    }
                 }
             }
             return undefined
