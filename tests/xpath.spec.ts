@@ -56,10 +56,16 @@ test.describe('ui5 site', () => {
         })
         test('debug-xml function', async ({ page }) => {
             await page.locator('ui5_xpath=//*').first().waitFor()
-            await expect(page.locator('ui5_xpath=ui5:debug-xml(root)').isVisible()).rejects.toThrow(
+            await expect(page.locator('ui5_xpath=ui5:debug-xml(/*)').isVisible()).rejects.toThrow(
                 new RegExp(escapeRegExp('<sap.ui.core.ComponentContainer id="__container0">'), 'u'),
             )
         })
+        test('root element', async ({ page }) => {
+            await expect(page.locator('ui5_xpath=/*')).toHaveCount(1)
+            await expect(page.locator('ui5_xpath=/*/*')).toHaveCount(2) // sanity check
+        })
+        test('concatenated with other locator', ({ page }) =>
+            expect(page.locator('#__toolbar2').locator('ui5_xpath=./*')).toHaveCount(4))
     })
     test.describe('demo apps', () => {
         test('multiple root nodes', async ({ page }) => {
