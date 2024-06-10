@@ -1,18 +1,17 @@
-import {
-    fixDefaultTimeout,
-    navigateToControlSample,
-    navigateToUi5DocsPage,
-    registerSelectorEngine,
-} from './testUtils'
+import { Ui5Tester, fixDefaultTimeout } from './testUtils'
 import { expect, test } from '@playwright/test'
 import { escapeRegExp } from 'lodash'
 
-test.beforeAll(() => registerSelectorEngine('xpath'))
+const ui5Tester = new Ui5Tester('xpath')
+
+test.beforeAll(() => ui5Tester.registerSelectorEngine())
 test.beforeEach(({ page }) => fixDefaultTimeout(page))
 
 test.describe('ui5 site', () => {
     test.describe('control samples', () => {
-        test.beforeEach(({ page }) => navigateToControlSample(page, 'sap.m', 'sap.m.sample.Button'))
+        test.beforeEach(({ page }) =>
+            ui5Tester.navigateToControlSample(page, 'sap.m', 'sap.m.sample.Button'),
+        )
         test.describe('any control', () => {
             test('*', ({ page }) => expect(page.locator('ui5_xpath=//*')).toHaveCount(43))
             test('id', ({ page }) =>
@@ -48,7 +47,7 @@ test.describe('ui5 site', () => {
             expect(page.locator('ui5_xpath=//sap.m.asdf')).toHaveCount(0))
         test('includes the selector in the error message', async ({ page }) => {
             // ideally we shouldn't need the site here, but fontoxpath needs to build the xml from ui5 before it can validate the xpath
-            await navigateToControlSample(page, 'sap.m', 'sap.m.sample.Button')
+            await ui5Tester.navigateToControlSample(page, 'sap.m', 'sap.m.sample.Button')
             const selector = '\\%(&*)^%*)[asdf'
             await expect(page.locator(`ui5_xpath=${selector}`).isVisible()).rejects.toThrow(
                 new RegExp(`selector: "${escapeRegExp(selector)}"`, 'u'),
@@ -69,7 +68,7 @@ test.describe('ui5 site', () => {
     })
     test.describe('demo apps', () => {
         test('multiple root nodes', async ({ page }) => {
-            await navigateToUi5DocsPage(
+            await ui5Tester.navigateToUi5DocsPage(
                 page,
                 '/test-resources/sap/m/demokit/cart/webapp/index.html?sap-ui-theme=sap_horizon_dark',
             )
