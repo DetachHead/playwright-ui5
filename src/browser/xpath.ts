@@ -114,7 +114,8 @@ const options: Options = {
     namespaceResolver: (prefix) => (prefix === namespaceURI ? prefix : null),
 }
 
-const getRootElements = (node: Element | Document) => Array.from(node.childNodes) as Element[]
+const getRootElements = (htmlNode: Element | Document) =>
+    Array.from(htmlNode.childNodes).filter((childNode) => childNode instanceof Element)
 const createXmlDom = (node: Element) => new DOMParser().parseFromString(createXml(node), 'text/xml')
 
 const matchXmlElementToHtmlElement = (htmlRoot: Element | Document, xmlElement: Element) => {
