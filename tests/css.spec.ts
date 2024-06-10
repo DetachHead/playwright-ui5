@@ -1,12 +1,16 @@
-import { fixDefaultTimeout, navigateToControlSample, registerSelectorEngine } from './testUtils'
+import { Ui5Tester, fixDefaultTimeout } from './testUtils'
 import { expect, test } from '@playwright/test'
 import { escapeRegExp } from 'lodash'
 
-test.beforeAll(() => registerSelectorEngine('css'))
+const ui5Tester = new Ui5Tester('css')
+
+test.beforeAll(() => ui5Tester.registerSelectorEngine())
 test.beforeEach(({ page }) => fixDefaultTimeout(page))
 
 test.describe('ui5 site - button', () => {
-    test.beforeEach(({ page }) => navigateToControlSample(page, 'sap.m', 'sap.m.sample.Button'))
+    test.beforeEach(({ page }) =>
+        ui5Tester.navigateToControlSample(page, 'sap.m', 'sap.m.sample.Button'),
+    )
     test.describe('any control', () => {
         test('*', ({ page }) => expect(page.locator('ui5_css=*')).toHaveCount(45))
         test('id', ({ page }) => expect(page.locator('ui5_css=#__button1')).toHaveCount(1))
@@ -111,7 +115,7 @@ test.describe('ui5 site - button', () => {
 })
 
 test('~', async ({ page }) => {
-    await navigateToControlSample(page, 'sap.m', 'sap.m.sample.InputAssisted')
+    await ui5Tester.navigateToControlSample(page, 'sap.m', 'sap.m.sample.InputAssisted')
     // on webkit clicking it brings up a popup with a second input box
     const control = page.locator('ui5_css=sap.m.Input').last()
     // need to click and use keyboard because on webkit the input field is readonly
