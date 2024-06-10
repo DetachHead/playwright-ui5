@@ -81,21 +81,6 @@ in this case, `//sap.m.Button[@id='foo']` will work, but `//sap.m.Button[@text='
 
 the XML view matches the control tree from the [ui5 diagnostics window](https://sapui5.hana.ondemand.com/sdk/#/topic/04b75eae78ef4bae9b40cd7540ae8bdc) and the [ui5 inspector chrome extension](https://chromewebstore.google.com/detail/ui5-inspector/bebecogbafbighhaildooiibipcnbngo), so we recommend using one of these when working with the ui5 xpath selector engine.
 
-#### the root node
-
-since the ui5 control tree can have multiple root nodes, the xpath selector engine wraps `sap-ui-area` nodes inside a `root` node:
-
-```xml
-<root>
-    <sap-ui-area id="sap-ui-static">
-        <sap.m.Page id="__page0">
-            <sap.m.Button id="foo"></sap.m.Button>
-        </sap.m.Page>
-    </sap-ui-area>
-    <sap-ui-area id="canvas">
-</root>
-```
-
 #### API
 
 the following xpath functions are available in the `ui5:` namespace:
@@ -119,7 +104,7 @@ gets the value for the property with the specified name from the specified eleme
 raises an exception containining the XML control tree with the specified element as the root. this function is only intended for debugging purposes.
 
 ```xpath
-ui5:debug-xml(root)
+ui5:debug-xml(/*)
 ```
 
 this will throw an exception containing the entire control tree for the page in XML format:
@@ -127,9 +112,7 @@ this will throw an exception containing the entire control tree for the page in 
 ```
 playwright-ui5 debug-xml function was called. here is the XML element tree:
 
-<root>
-    <sap-ui-area id="sap-ui-static">
-        <!-- ... -->
-    </sap-ui-area>
-</root>
+<sap-ui-area id="sap-ui-static">
+    <!-- ... -->
+</sap-ui-area>
 ```
