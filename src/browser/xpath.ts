@@ -55,8 +55,12 @@ const createTreeModelNodes = (node: Element) => {
     return result
 }
 
-const createXmlFromTreeNode = (treeModelNode: TreeModelNode) => {
+const createXmlFromTreeNodes = (treeModelNodes: TreeModelNode[]) => {
     let xml = create({ version: '1.0' })
+    // need to create a top level "root" node because xml doesn't support multiple root nodes
+    if (treeModelNodes[0]?.name === 'sap-ui-area') {
+        xml = xml.ele('root')
+    }
     const inner = (nodes: TreeModelNode[]) => {
         nodes.forEach((node) => {
             xml = xml.ele(node.name, { id: node.id })
@@ -64,12 +68,12 @@ const createXmlFromTreeNode = (treeModelNode: TreeModelNode) => {
             xml = xml.up()
         })
     }
-    inner([treeModelNode])
+    inner(treeModelNodes)
     return xml.end({ prettyPrint: true })
 }
 
 const createXml = (nodeElement: Element) =>
-    createTreeModelNodes(nodeElement).map(createXmlFromTreeNode)
+    createXmlFromTreeNodes(createTreeModelNodes(nodeElement))
 
 const namespaceURI = 'ui5'
 
@@ -113,20 +117,22 @@ const options: Options = {
     namespaceResolver: (prefix) => (prefix === namespaceURI ? prefix : null),
 }
 
-const getRootElements = (htmlNode: Element | Document) =>
-    Array.from(htmlNode.childNodes).filter((childNode) => childNode instanceof Element)
-const createXmlDoms = (node: Element) =>
-    createXml(node).map((xml) => new DOMParser().parseFromString(xml, 'text/xml'))
+const getRootElement = (node: Element | Document) =>
+    (node instanceof Element ? node.ownerDocument : node).querySelector('*')
 
-const matchXmlElementToHtmlElement = (htmlRoot: Element | Document, xmlElement: Element) => {
-    const result = htmlRoot.querySelector(`[id='${xmlElement.id}']`)
+const createXmlDom = (node: Element | Document) => {
+    const root = getRootElement(node)
+    if (root === null) {
+        return undefined
+    }
+    const result = new DOMParser().parseFromString(createXml(root), 'text/xml')
+    return node instanceof Element ? result.getElementById(node.id) : result
+}
+
+const matchXmlElementToHtmlElement = (root: Element | Document, element: Element) =>
     // this should always match an element, but there seems to be a timing issue in firefox while
     // the ui5 site is loading where there's an element with an empty id
-    if (result === null) {
-        return []
-    }
-    return [result]
-}
+    getRootElement(root)?.querySelector(`[id='${element.id}']`) ?? undefined
 
 export default {
     queryAll: (root, selector) => {
@@ -134,13 +140,9 @@ export default {
             if (!isUi5()) {
                 return []
             }
-            return getRootElements(root).flatMap((node) =>
-                createXmlDoms(node)
-                    .flatMap((xmlDom) =>
-                        evaluateXPathToNodes<Element>(selector, xmlDom, null, null, options),
-                    )
-                    .flatMap((element) => matchXmlElementToHtmlElement(root, element)),
-            )
+            return evaluateXPathToNodes<Element>(selector, createXmlDom(root), null, null, options)
+                .map((element) => matchXmlElementToHtmlElement(root, element))
+                .filter((element) => element !== undefined)
         } catch (e) {
             throw new Ui5SelectorEngineError(selector, e)
         }
@@ -150,21 +152,18 @@ export default {
             if (!isUi5()) {
                 return undefined
             }
-            for (const node of getRootElements(root)) {
-                for (const xmlDom of createXmlDoms(node)) {
-                    const result = evaluateXPathToFirstNode<Element>(
-                        selector,
-                        xmlDom,
-                        null,
-                        null,
-                        options,
-                    )
-                    if (result) {
-                        return matchXmlElementToHtmlElement(root, result)[0]
-                    }
-                }
+            const node = getRootElement(root)
+            if (node === null) {
+                return undefined
             }
-            return undefined
+            const result = evaluateXPathToFirstNode<Element>(
+                selector,
+                createXmlDom(node),
+                null,
+                null,
+                options,
+            )
+            return result ? matchXmlElementToHtmlElement(root, result) : undefined
         } catch (e) {
             throw new Ui5SelectorEngineError(selector, e)
         }
