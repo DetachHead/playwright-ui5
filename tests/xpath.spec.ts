@@ -60,11 +60,17 @@ test.describe('ui5 site', () => {
             )
         })
         test('root element', async ({ page }) => {
-            await expect(page.locator('ui5_xpath=/*')).toHaveCount(1)
-            await expect(page.locator('ui5_xpath=/*/*')).toHaveCount(2) // sanity check
+            await expect(page.locator('ui5_xpath=/root')).toHaveCount(0) // doesn't match anything because it's not a real ui5 element
+            await expect(page.locator('ui5_xpath=/root/*')).toHaveCount(1)
         })
-        test('concatenated with other locator', ({ page }) =>
-            expect(page.locator('#__toolbar2').locator('ui5_xpath=./*')).toHaveCount(4))
+        test.describe('concatenated with other locators', () => {
+            test('child', ({ page }) =>
+                expect(page.locator('#__toolbar2').locator('ui5_xpath=./*')).toHaveCount(4))
+            test('following-sibling', ({ page }) =>
+                expect(
+                    page.locator('#__toolbar0').locator('ui5_xpath=./following-sibling::*').first(),
+                ).toHaveAttribute('id', '__toolbar1'))
+        })
     })
     test.describe('demo apps', () => {
         test('multiple root nodes', async ({ page }) => {
