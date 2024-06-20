@@ -134,13 +134,27 @@ const matchXmlElementToHtmlElement = (root: Element | Document, element: Element
     // the ui5 site is loading where there's an element with an empty id
     getRootElement(root)?.querySelector(`[id='${element.id}']`) ?? undefined
 
+/**
+ * if the selector is in the context of another locator and does not start with a `.`, prepend a
+ * `.` to it to ensure that it doesn't match elements outside of its parent locator. this is the
+ * same thing playwright does in its xpath selector engine.
+ */
+const fixSelectorContext = (root: Element | Document, selector: string) =>
+    selector.startsWith('/') && root.nodeType !== Node.DOCUMENT_NODE ? `.${selector}` : selector
+
 export default {
     queryAll: (root, selector) => {
         try {
             if (!isUi5()) {
                 return []
             }
-            return evaluateXPathToNodes<Element>(selector, createXmlDom(root), null, null, options)
+            return evaluateXPathToNodes<Element>(
+                fixSelectorContext(root, selector),
+                createXmlDom(root),
+                null,
+                null,
+                options,
+            )
                 .map((element) => matchXmlElementToHtmlElement(root, element))
                 .filter((element) => element !== undefined)
         } catch (e) {
@@ -157,7 +171,7 @@ export default {
                 return undefined
             }
             const result = evaluateXPathToFirstNode<Element>(
-                selector,
+                fixSelectorContext(root, selector),
                 createXmlDom(node),
                 null,
                 null,
