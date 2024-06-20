@@ -64,8 +64,10 @@ test.describe('ui5 site', () => {
             await expect(page.locator('ui5_xpath=/root/*')).toHaveCount(1)
         })
         test.describe('concatenated with other locators', () => {
-            test('child', ({ page }) =>
+            test('child, explicit .', ({ page }) =>
                 expect(page.locator('#__toolbar2').locator('ui5_xpath=./*')).toHaveCount(4))
+            test('child, implicit .', ({ page }) =>
+                expect(page.locator('#__toolbar2').locator('ui5_xpath=/*')).toHaveCount(4))
             test('following-sibling', ({ page }) =>
                 expect(
                     page.locator('#__toolbar0').locator('ui5_xpath=./following-sibling::*').first(),
