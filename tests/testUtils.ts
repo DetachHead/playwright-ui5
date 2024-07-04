@@ -11,7 +11,7 @@ export class Ui5Tester {
         this.selectorEngineId = `ui5_${selectorEngineName}`
     }
     navigateToUi5DocsPage = async (page: Page, path: `/${string}`) => {
-        await page.goto(`https://ui5.sap.com/1.112.3${path}`)
+        await page.goto(`https://ui5.sap.com/1.125.1${path}`)
         await page.waitForSelector(
             `${this.selectorEngineId}=${
                 this.selectorEngineName === 'css' ? '*' : '//*'
@@ -22,7 +22,7 @@ export class Ui5Tester {
     navigateToControlSample = (page: Page, lib: string, sampleId: string) =>
         this.navigateToUi5DocsPage(
             page,
-            `/resources/sap/ui/documentation/sdk/index.html?sap-ui-xx-sample-id=${sampleId}&sap-ui-xx-sample-lib=${lib}&sap-ui-xx-sample-origin=.&sap-ui-xx-dk-origin=https://ui5.sap.com`,
+            `/resources/sap/ui/documentation/sdk/index.html?sap-ui-xx-sample-id=${sampleId}&sap-ui-xx-sample-lib=${lib}&sap-ui-xx-sample-origin=.&sap-ui-xx-dk-origin=https%3A%2F%2Fui5.sap.com&sap-ui-theme=sap_horizon_dark&sap-ui-rtl=false&sap-ui-density=sapUiSizeCompact`,
         )
 
     registerSelectorEngine = async () =>

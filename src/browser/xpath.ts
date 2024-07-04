@@ -126,7 +126,9 @@ const createXmlDom = (node: Element | Document) => {
         return undefined
     }
     const result = new DOMParser().parseFromString(createXml(root), 'text/xml')
-    return node instanceof Element ? result.getElementById(node.id) : result
+    // if it's an html element where its id exists in the xml dom too, then return the element
+    // in the dom matching that id, as it can be used as the context (.) for xpath selectors
+    return node instanceof Element ? result.getElementById(node.id) ?? result : result
 }
 
 const matchXmlElementToHtmlElement = (root: Element | Document, element: Element) =>
