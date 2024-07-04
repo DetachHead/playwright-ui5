@@ -73,6 +73,10 @@ test.describe('ui5 site', () => {
                     page.locator('#__toolbar0').locator('ui5_xpath=./following-sibling::*').first(),
                 ).toHaveAttribute('id', '__toolbar1'))
         })
+        test('highlight', ({ page }) =>
+            // highlighting causes the root node to be the root html element instead of the document object for some reason,
+            // which we need to have handling for
+            page.locator('ui5_xpath=//sap.m.Button[1]').highlight())
     })
     test.describe('demo apps', () => {
         test('multiple root nodes', async ({ page }) => {
