@@ -1,6 +1,6 @@
 {
   "name": "playwright-ui5",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "files": [
     "dist",
     "src/node"
