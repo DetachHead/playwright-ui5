@@ -59,46 +59,47 @@ const querySelector = (root: Element | Document, selector: AstSelector): Element
             delete rule.classNames
         }
 
-        // eslint-disable-next-line detachhead/suggestions-as-errors -- using the deprecated registry since we still want to support older ui5 versions
-        const controls = sap.ui.core.Element.registry.filter((element) => {
-            if (
-                (rule.tag?.type === 'TagName' &&
-                    rule.tag.name !== element.getMetadata().getName() &&
-                    (rule.pseudoElement !== 'subclass' ||
-                        !getAllParents(element).includes(rule.tag.name))) ||
-                (rule.ids && rule.ids[0] !== element.getId())
-            ) {
-                return false
-            }
-
-            return (rule.attributes ?? []).every((attr) => {
-                let actualValue: string
-                try {
-                    actualValue = String(element.getProperty(attr.name))
-                } catch {
-                    // property doesn't exist
+        const controls =
+            // eslint-disable-next-line detachhead/suggestions-as-errors, @typescript-eslint/no-unnecessary-condition -- using the deprecated registry since we still want to support older ui5 versions, seems this can be undefined if the page is in the middle of loading
+            sap.ui.core.Element?.registry.filter((element) => {
+                if (
+                    (rule.tag?.type === 'TagName' &&
+                        rule.tag.name !== element.getMetadata().getName() &&
+                        (rule.pseudoElement !== 'subclass' ||
+                            !getAllParents(element).includes(rule.tag.name))) ||
+                    (rule.ids && rule.ids[0] !== element.getId())
+                ) {
                     return false
                 }
-                if (!('value' in attr)) {
-                    // eg. sap.m.Button[attr]
-                    return true
-                }
-                const expectedValue = (attr.value as AstString).value
-                return {
-                    '=': actualValue === expectedValue,
-                    '^=': actualValue.startsWith(expectedValue),
-                    '$=': actualValue.endsWith(expectedValue),
-                    '*=': actualValue.includes(expectedValue),
-                    '~=': actualValue.trim() === expectedValue,
-                    '|=': actualValue.split('-')[0] === expectedValue,
-                }[
-                    throwIfUndefined(
-                        attr.operator,
-                        'attribute operator was undefined when value was set (this should NEVER happen)',
-                    )
-                ]
-            })
-        })
+
+                return (rule.attributes ?? []).every((attr) => {
+                    let actualValue: string
+                    try {
+                        actualValue = String(element.getProperty(attr.name))
+                    } catch {
+                        // property doesn't exist
+                        return false
+                    }
+                    if (!('value' in attr)) {
+                        // eg. sap.m.Button[attr]
+                        return true
+                    }
+                    const expectedValue = (attr.value as AstString).value
+                    return {
+                        '=': actualValue === expectedValue,
+                        '^=': actualValue.startsWith(expectedValue),
+                        '$=': actualValue.endsWith(expectedValue),
+                        '*=': actualValue.includes(expectedValue),
+                        '~=': actualValue.trim() === expectedValue,
+                        '|=': actualValue.split('-')[0] === expectedValue,
+                    }[
+                        throwIfUndefined(
+                            attr.operator,
+                            'attribute operator was undefined when value was set (this should NEVER happen)',
+                        )
+                    ]
+                })
+            }) ?? []
         return controls
             .map((control) => control.getDomRef())
             .filter((element): element is Element => {
