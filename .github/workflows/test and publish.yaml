@@ -10,37 +10,37 @@ jobs:
     build-and-test:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
-            - uses: actions/setup-node@v3
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
               with:
                   node-version: 16.9.1
             - run: npm run setup
             - run: npm run check
             - name: upload compiled code
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                   name: build
                   path: dist
               env:
                   CI: true
             - name: upload playwright report
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               if: always()
               with:
                   name: playwright-report
                   path: playwright-report/
                   retention-days: 30
-            - uses: actions/configure-pages@v3
+            - uses: actions/configure-pages@v5
               if: always()
             - name: Upload playwright report to github pages
-              uses: actions/upload-pages-artifact@v2
+              uses: actions/upload-pages-artifact@v3
               if: always()
               with:
                   path: playwright-report/
             - name: Deploy playwright report to Github Pages
               if: always()
               id: deployment
-              uses: actions/deploy-pages@v2
+              uses: actions/deploy-pages@v4
               with:
                   # this doesnt work yet so there can only be one deployed playwright report at a time across all PRs
                   # https://github.com/actions/deploy-pages/issues/180
@@ -60,8 +60,8 @@ jobs:
             packages: write
             pull-requests: read
         steps:
-            - uses: actions/checkout@v1
-            - uses: actions/setup-node@v3
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
               with:
                   node-version: 16.9.1
             - run: echo ::set-output name=CURRENT_VERSION::$(node -p "require(\"./package.json\").version")
@@ -69,7 +69,7 @@ jobs:
             - if: github.ref == 'refs/heads/master'
               run: echo ::set-output name=VERSION_INFO::$(npm view $(node -p "require(\"./package.json\").name")@=${{ steps.current-version.outputs.CURRENT_VERSION }})
               id: version-was-changed
-            - uses: actions/download-artifact@v3
+            - uses: actions/download-artifact@v4
               # need to publish if the branch isn't master, or it is master and the version in package.json hasn't been published yet
               if: github.ref != 'refs/heads/master' || steps.version-was-changed.outputs.VERSION_INFO == ''
               with:
