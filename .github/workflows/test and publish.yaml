@@ -9,12 +9,12 @@ permissions:
 jobs:
     build-and-test:
         runs-on: ubuntu-latest
+        container:
+            image: mcr.microsoft.com/playwright:v1.43.1
+            options: --user 1001
         steps:
             - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: 16.9.1
-            - run: npm run setup
+            - run: npm ci
             - run: npm run check
             - name: upload compiled code
               uses: actions/upload-artifact@v4
