@@ -4,9 +4,19 @@ playwright [custom selector engines](https://playwright.dev/docs/extensibility#c
 
 ## installation
 
+### if using playwright for nodejs
+
 ```bash
 npm install playwright-ui5
 ```
+
+### if using playwright for python
+
+```bash
+uv add playwright-ui5-select
+```
+
+see the [playwright-ui5-select](https://github.com/JamesYFC/playwright-ui5-select) repo for usage instructions
 
 ## usage
 
