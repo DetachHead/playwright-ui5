@@ -1,5 +1,5 @@
 import UI5Metadata from 'sap/ui/base/Metadata'
-import UI5Core from 'sap/ui/core/Core'
+import type UI5Core from 'sap/ui/core/Core'
 import UI5Element from 'sap/ui/core/Element'
 
 /* eslint-disable @typescript-eslint/no-namespace -- see comment below */

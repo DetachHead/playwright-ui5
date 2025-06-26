@@ -25,6 +25,8 @@ const config = {
         ],
         // we aren't making a public api
         '@typescript-eslint/explicit-module-boundary-types': 'off',
+        // eslint-plugin-import needs the type keyword to detect type imports
+        '@typescript-eslint/consistent-type-imports': 'error',
     },
     overrides: [
         ...['src/browser', 'src/node', 'tests'].map((path) => ({
