@@ -2,6 +2,8 @@
     "extends": "../tsconfig.json",
     "compilerOptions": {
         "noEmit": true,
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
         "lib": ["es2021", "dom"] //https://github.com/microsoft/playwright/issues/16707
     },
     "include": ["**/*.ts"],
