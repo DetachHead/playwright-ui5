@@ -30,7 +30,7 @@ export class Ui5Tester {
             this.selectorEngineId,
             // need dynamic import, otherwise it could import outdated code:
             throwIfUndefined(
-                ((await import('../dist/node/main')) as Record<string, SelectorEngine>)[
+                ((await import('../dist/node/main.js')) as Record<string, SelectorEngine>)[
                     this.selectorEngineName
                 ],
                 `invalid selector engine name: ${this.selectorEngineName}`,
