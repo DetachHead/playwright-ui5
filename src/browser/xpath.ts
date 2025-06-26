@@ -1,6 +1,7 @@
-import { SelectorEngine, Ui5SelectorEngineError, isUi5 } from './common'
+import type { SelectorEngine } from '../common/types'
+import { Ui5SelectorEngineError, isUi5 } from './common'
+import type { Options } from 'fontoxpath'
 import {
-    Options,
     evaluateXPathToFirstNode,
     evaluateXPathToNodes,
     registerCustomXPathFunction,

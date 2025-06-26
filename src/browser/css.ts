@@ -1,5 +1,6 @@
-import { SelectorEngine, Ui5SelectorEngineError, isUi5 } from './common'
-import { AstSelector, AstString, createParser } from 'css-selector-parser'
+import type { SelectorEngine } from '../common/types'
+import { Ui5SelectorEngineError, isUi5 } from './common'
+import { type AstSelector, type AstString, createParser } from 'css-selector-parser'
 import { throwIfUndefined } from 'throw-expression'
 
 const getAllParents = (element: sap.ui.core.Element): string[] => {

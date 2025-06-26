@@ -1,5 +1,5 @@
-import { SelectorEngine } from '../src/node/main'
-import { Page, selectors } from '@playwright/test'
+import type { SelectorEngine } from '../src/node/main'
+import { type Page, selectors } from '@playwright/test'
 import { throwIfUndefined } from 'throw-expression'
 
 type SelectorEngineName = 'css' | 'xpath'
