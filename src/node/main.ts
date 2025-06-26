@@ -5,11 +5,14 @@ import type { selectors } from 'playwright-core'
 export type SelectorEngine = Parameters<typeof selectors.register>[1]
 
 const selectorEngine = (fileName: string): SelectorEngine => ({
-    // https://github.com/microsoft/playwright/issues/16705
-    content: `(() => {${readFileSync(
-        join(__dirname, `../../dist/browser/${fileName}.js`),
-        'utf8',
-    )};return module.exports.default})()`,
+    // https://github.com/microsoft/playwright/issues/36448
+    content: `(() => {
+        if (typeof module === 'undefined') {
+            window.module = {exports: {}};
+        }
+        ${readFileSync(join(__dirname, `../../dist/browser/${fileName}.js`), 'utf8')};
+        return module.exports.default
+    })()`,
 })
 
 export const css = selectorEngine('css')
