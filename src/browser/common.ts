@@ -28,11 +28,6 @@ declare global {
 }
 /* eslint-enable @typescript-eslint/no-namespace */
 
-export interface SelectorEngine {
-    queryAll: (root: Element | Document, selector: string) => Element[]
-    query: (root: Element | Document, selector: string) => Element | undefined
-}
-
 /**
  * handling for if the page is not ui5.
  * sap webgui also uses a global sap object so we need to check for sap.ui specifically

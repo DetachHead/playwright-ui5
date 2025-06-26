@@ -29,7 +29,7 @@ const config = {
         '@typescript-eslint/consistent-type-imports': 'error',
     },
     overrides: [
-        ...['src/browser', 'src/node', 'tests'].map((path) => ({
+        ...['src/common', 'src/browser', 'src/node', 'tests'].map((path) => ({
             files: [`${path}/**/*.ts`],
             parserOptions: { ...parserOptions, project: [`./${path}/tsconfig.json`] },
         })),
