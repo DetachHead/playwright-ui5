@@ -7,18 +7,8 @@ export type SelectorEngine = Parameters<typeof selectors.register>[1]
 const selectorEngine = (fileName: string): SelectorEngine => ({
     // https://github.com/microsoft/playwright/issues/36448
     content: `(() => {
-        const useFakeModule = typeof module === 'undefined'
-        if (useFakeModule) {
-            window.module = {exports: {}};
-        }
-        try {
-            ${readFileSync(join(__dirname, `../../dist/browser/${fileName}.js`), 'utf8')};
-            return module.exports.default
-        } finally {
-            if (useFakeModule) {
-                delete module
-            }
-        }
+        const module = {exports: {}};
+        ${readFileSync(join(__dirname, `../../dist/browser/${fileName}.js`), 'utf8')};
         return module.exports.default
     })()`,
 })
