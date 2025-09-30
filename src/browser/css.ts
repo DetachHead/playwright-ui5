@@ -61,8 +61,8 @@ const querySelector = (root: Element | Document, selector: AstSelector): Element
         }
 
         const controls =
-            // eslint-disable-next-line detachhead/suggestions-as-errors, @typescript-eslint/no-unnecessary-condition -- using the deprecated registry since we still want to support older ui5 versions, seems this can be undefined if the page is in the middle of loading
-            sap.ui.core.Element?.registry.filter((element) => {
+            // eslint-disable-next-line detachhead/suggestions-as-errors, @typescript-eslint/no-unnecessary-condition -- using the deprecated registry since we still want to support older ui5 versions, seems any part of this can be undefined if the page is in the middle of loading
+            sap.ui?.core?.Element?.registry.filter((element) => {
                 if (
                     (rule.tag?.type === 'TagName' &&
                         rule.tag.name !== element.getMetadata().getName() &&

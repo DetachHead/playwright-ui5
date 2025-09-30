@@ -32,7 +32,8 @@ declare global {
  * handling for if the page is not ui5.
  * sap webgui also uses a global sap object so we need to check for sap.ui specifically
  */
-export const isUi5 = () => typeof sap !== 'undefined' && typeof sap.ui !== 'undefined'
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- the types don't account for this but any of these could be undefined if the ui5 runtime is partially loaded
+export const isUi5 = () => typeof sap !== 'undefined' && sap.ui?.core !== undefined
 
 export class Ui5SelectorEngineError extends Error {
     constructor(selector: string, error: unknown) {
