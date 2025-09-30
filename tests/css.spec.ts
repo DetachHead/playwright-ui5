@@ -142,6 +142,15 @@ test.describe('no ui5 site', () => {
             })
             await expect(page.locator('ui5_css=m.Button')).toHaveCount(0)
         })
+        test('ui5 runtime is partially loaded', async ({ page }) => {
+            await page.evaluate(() => {
+                // @ts-expect-error https://github.com/microsoft/TypeScript/issues/43434
+                window.sap = {
+                    ui: {},
+                }
+            })
+            await expect(page.locator('ui5_css=m.Button')).toHaveCount(0)
+        })
     })
     test.describe('unsupported syntax', () => {
         test('comparitors', ({ page }) =>
