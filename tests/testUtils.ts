@@ -11,7 +11,7 @@ export class Ui5Tester {
         this.selectorEngineId = `ui5_${selectorEngineName}`
     }
     navigateToUi5DocsPage = async (page: Page, path: `/${string}`) => {
-        await page.goto(`https://ui5.sap.com/1.125.1${path}`)
+        await page.goto(`https://ui5.sap.com/1.127.7${path}`)
         await page.waitForSelector(
             `${this.selectorEngineId}=${
                 this.selectorEngineName === 'css' ? '*' : '//*'
