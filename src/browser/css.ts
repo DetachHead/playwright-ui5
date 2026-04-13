@@ -47,8 +47,8 @@ const parse = createParser({
     },
 })
 
-const querySelector = (root: Element | Document, selector: AstSelector): Element[] =>
-    selector.rules.flatMap((rule) => {
+function* querySelector(root: Element | Document, selector: AstSelector) {
+    for (const rule of selector.rules) {
         if (rule.tag?.type === 'TagName' && rule.classNames) {
             // support omitting the sap., since every ui5 control starts with sap (i think):
             const sapNamespace = 'sap'
@@ -101,46 +101,46 @@ const querySelector = (root: Element | Document, selector: AstSelector): Element
                     ]
                 })
             }) ?? []
-        return controls
-            .map((control) => control.getDomRef())
-            .filter((element): element is Element => {
+        for (const control of controls) {
+            const element = control.getDomRef()
+            if (
+                element === null ||
+                // on nested selectors/locators, exclude any elements from outside that scope by making sure they're present in this root:
+                root.querySelector(`[id='${element.id}']`) === null
+            ) {
+                continue
+            }
+            if (rule.pseudoClasses) {
                 if (
-                    element === null ||
-                    // on nested selectors/locators, exclude any elements from outside that scope by making sure they're present in this root:
-                    root.querySelector(`[id='${element.id}']`) === null
-                ) {
-                    return false
-                }
-                if (
-                    rule.pseudoClasses &&
                     querySelector(
                         element,
                         throwIfUndefined(
                             rule.pseudoClasses[0],
                             '":has" pseudo-class was specified without an argument',
                         ).argument as AstSelector,
-                    ).length === 0
+                    ).next().done
                 ) {
-                    return false
+                    continue
                 }
-                return true
-            })
-    })
+            }
+            yield element
+        }
+    }
+}
 
-const queryAll = (root: Element | Document, selector: string): Element[] => {
+function* queryAll(root: Element | Document, selector: string): Generator<Element, undefined> {
     try {
         const parsedSelector = parseSelector(selector)
         // handling for if the page is not ui5. sap webgui also uses a global sap object so we need to check for sap.ui specifically
-        if (!isUi5()) {
-            return []
+        if (isUi5()) {
+            yield* querySelector(root, parsedSelector)
         }
-        return querySelector(root, parsedSelector)
     } catch (e) {
         throw new Ui5SelectorEngineError(selector, e)
     }
 }
 
 export default {
-    queryAll,
-    query: (root, selector) => queryAll(root, selector)[0],
+    queryAll: (root, selector) => Array.from(queryAll(root, selector)),
+    query: (root, selector) => queryAll(root, selector).next().value,
 } satisfies SelectorEngine
