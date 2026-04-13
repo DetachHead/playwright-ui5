@@ -32,7 +32,7 @@ test.beforeAll(async () => {
     await selectors.register('ui5', css)
 })
 
-test('ui5 example', ({ page }) => {
+test('ui5 example', async ({ page }) => {
     await page.goto('https://ui5.sap.com/')
     await page.click("ui5=sap.m.Button[text='Get Started with UI5']")
 })
