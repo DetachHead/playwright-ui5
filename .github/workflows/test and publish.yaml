@@ -14,6 +14,9 @@ jobs:
             options: --user 1001
         steps:
             - uses: actions/checkout@v4
+            - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
+              with:
+                  node-version-file: package.json
             - run: npm ci
             - run: npm run check
             - name: upload compiled code
@@ -61,9 +64,9 @@ jobs:
             pull-requests: read
         steps:
             - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
               with:
-                  node-version: 16.9.1
+                  node-version-file: package.json
             - run: echo ::set-output name=CURRENT_VERSION::$(node -p "require(\"./package.json\").version")
               id: current-version
             - if: github.ref == 'refs/heads/master'

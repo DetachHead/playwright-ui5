@@ -50,6 +50,9 @@
     "throw-expression": "^1.0.2",
     "xmlbuilder2": "^3.1.1"
   },
+  "devEngines": {
+    "runtime": {"name": "node", "version": "24.14.1"}
+  },
   "//": [
     "https://github.com/trivago/prettier-plugin-sort-imports/issues/204#issuecomment-1431287240",
     "https://github.com/DetachHead/eslint-plugin-detachhead/blob/master/docs/rules/suggestions-as-errors.md#troubleshooting"
