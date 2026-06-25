@@ -4,6 +4,7 @@ import {
   registerCustomXPathFunction,
   type Options,
 } from "fontoxpath";
+import type UI5Element from "sap/ui/core/Element";
 import { throwIfUndefined } from "throw-expression";
 import { create } from "xmlbuilder2";
 
@@ -87,8 +88,9 @@ registerCustomXPathFunction(
   "item()*",
   (_, element: Element, name: string) => {
     const id = element.getAttribute("id");
-    // eslint-disable-next-line typescript/no-deprecated -- using deprecated byId method to support older ui5 versions
-    const ui5Element = sap.ui.getCore().byId(id);
+    const ui5Element = (sap.ui.require("sap/ui/core/Element") as typeof UI5Element).getElementById(
+      id,
+    );
     let result;
     try {
       result = ui5Element?.getProperty(name) as unknown;
