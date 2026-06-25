@@ -29,5 +29,7 @@
     },
     "terminal.integrated.env.linux": {
         "PATH": "${workspaceFolder}/node_modules/.bin:${env:PATH}"
-    }
+    },
+    "chat.disableAIFeatures": true,
+    "telemetry.feedback.enabled": false
 }
