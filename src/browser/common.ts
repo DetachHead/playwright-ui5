@@ -1,6 +1,4 @@
-import UI5Metadata from 'sap/ui/base/Metadata'
-import type UI5Core from 'sap/ui/core/Core'
-import UI5Element from 'sap/ui/core/Element'
+import type Core from 'sap/ui/core/Core'
 
 /* eslint-disable @typescript-eslint/no-namespace -- see comment below */
 declare global {
@@ -10,20 +8,11 @@ declare global {
     // more supported esm package and declare the global namespaces ourselves. see
     // https://github.com/SAP/ui5-typescript/issues/289#issuecomment-1562667387
 
-    // ideally these would be defined like `const Element = Ui5Element` instead of
-    // these fake subclasses. see https://github.com/microsoft/TypeScript/issues/36348
-    namespace sap.ui.core {
-        class Element extends UI5Element {}
-        const Core: {
-            // no idea how this works, but it seems to be a class when using the global
-            // declaration but an instance when importing it as a module.
-            // https://github.com/SAP/ui5-typescript/issues/443#issuecomment-2074074078
-            new (): UI5Core
-            (): UI5Core
-        }
-    }
-    namespace sap.ui.base {
-        class Metadata extends UI5Metadata {}
+    // to make the esm imports work at runtime we use a custom esbuild plugin (see build.ts)
+    // but we still need this globally define namespace gfor out `isui5` function so we can
+    // test if the current page actually has ui5 in it
+    namespace sap.ui {
+        const core: Core | undefined
     }
 }
 /* eslint-enable @typescript-eslint/no-namespace */
