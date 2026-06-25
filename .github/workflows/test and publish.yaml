@@ -10,7 +10,7 @@ jobs:
     build-and-test:
         runs-on: ubuntu-latest
         container:
-            image: mcr.microsoft.com/playwright:v1.53.1
+            image: mcr.microsoft.com/playwright:v1.61.1
             options: --user 1001
         steps:
             - uses: actions/checkout@v4
