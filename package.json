@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@detachhead/eslint-config": "^1.5.0",
-    "@playwright/test": "1.53.1",
+    "@playwright/test": "1.61.1",
     "@sapui5/ts-types-esm": "^1.123.1",
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
     "@types/eslint": "^8.4.6",
@@ -51,7 +51,7 @@
     "xmlbuilder2": "^3.1.1"
   },
   "devEngines": {
-    "runtime": {"name": "node", "version": "24.14.1"}
+    "runtime": {"name": "node", "version": "26.3.1"}
   },
   "//": [
     "https://github.com/trivago/prettier-plugin-sort-imports/issues/204#issuecomment-1431287240",
