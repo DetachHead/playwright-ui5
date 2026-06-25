@@ -12,7 +12,7 @@
     "lint:fix": "npm run lint:check -- --fix",
     "format:check": "prettier --check .",
     "format:fix": "prettier --write .",
-    "build:browser": "tsc -p src/browser/tsconfig.json && esbuild src/browser/css.ts --bundle --define:global=window --format=cjs --outdir=dist/browser && esbuild src/browser/xpath.ts --bundle --define:global=window --format=cjs --outdir=dist/browser",
+    "build:browser": "tsc -p src/browser/tsconfig.json && node build.ts",
     "build:node": "tsc -p src/node/tsconfig.json",
     "typecheck:config-files": "tsc",
     "build": "rimraf ./dist && npm run build:browser && npm run build:node",

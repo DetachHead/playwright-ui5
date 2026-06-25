@@ -6,7 +6,7 @@ import {
     evaluateXPathToNodes,
     registerCustomXPathFunction,
 } from 'fontoxpath'
-import type UI5Element from 'sap/ui/core/Element'
+import UI5Element from 'sap/ui/core/Element'
 import { throwIfUndefined } from 'throw-expression'
 import { create } from 'xmlbuilder2'
 
@@ -86,9 +86,7 @@ registerCustomXPathFunction(
     (_, element: Element, name: string) => {
         const id = element.getAttribute('id')
 
-        const ui5Element = (
-            sap.ui.require('sap/ui/core/Core/Element') as typeof UI5Element
-        ).getElementById(id)
+        const ui5Element = UI5Element.getElementById(id)
         let result
         try {
             result = ui5Element?.getProperty(name) as unknown
