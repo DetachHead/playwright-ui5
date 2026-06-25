@@ -1,10 +1,13 @@
 import type { SelectorEngine } from '../common/types'
 import { Ui5SelectorEngineError, isUi5 } from './common'
 import { type AstSelector, type AstString, createParser } from 'css-selector-parser'
+import type Metadata from 'sap/ui/base/Metadata'
+import type Ui5Element from 'sap/ui/core/Element'
+import ElementRegistry from 'sap/ui/core/ElementRegistry'
 import { throwIfUndefined } from 'throw-expression'
 
-const getAllParents = (element: sap.ui.core.Element): string[] => {
-    const getParents = (class_: sap.ui.base.Metadata): sap.ui.base.Metadata[] => {
+const getAllParents = (element: Ui5Element): string[] => {
+    const getParents = (class_: Metadata): Metadata[] => {
         const parent = class_.getParent()
         if (parent !== undefined) {
             return [class_, ...getParents(parent)]
@@ -60,47 +63,45 @@ function* querySelector(root: Element | Document, selector: AstSelector) {
             delete rule.classNames
         }
 
-        const controls =
-            // eslint-disable-next-line detachhead/suggestions-as-errors, @typescript-eslint/no-unnecessary-condition -- using the deprecated registry since we still want to support older ui5 versions, seems any part of this can be undefined if the page is in the middle of loading
-            sap.ui?.core?.Element?.registry.filter((element) => {
-                if (
-                    (rule.tag?.type === 'TagName' &&
-                        rule.tag.name !== element.getMetadata().getName() &&
-                        (rule.pseudoElement !== 'subclass' ||
-                            !getAllParents(element).includes(rule.tag.name))) ||
-                    (rule.ids && rule.ids[0] !== element.getId())
-                ) {
+        const controls = ElementRegistry.filter((element) => {
+            if (
+                (rule.tag?.type === 'TagName' &&
+                    rule.tag.name !== element.getMetadata().getName() &&
+                    (rule.pseudoElement !== 'subclass' ||
+                        !getAllParents(element).includes(rule.tag.name))) ||
+                (rule.ids && rule.ids[0] !== element.getId())
+            ) {
+                return false
+            }
+
+            return (rule.attributes ?? []).every((attr) => {
+                let actualValue: string
+                try {
+                    actualValue = String(element.getProperty(attr.name))
+                } catch {
+                    // property doesn't exist
                     return false
                 }
-
-                return (rule.attributes ?? []).every((attr) => {
-                    let actualValue: string
-                    try {
-                        actualValue = String(element.getProperty(attr.name))
-                    } catch {
-                        // property doesn't exist
-                        return false
-                    }
-                    if (!('value' in attr)) {
-                        // eg. sap.m.Button[attr]
-                        return true
-                    }
-                    const expectedValue = (attr.value as AstString).value
-                    return {
-                        '=': actualValue === expectedValue,
-                        '^=': actualValue.startsWith(expectedValue),
-                        '$=': actualValue.endsWith(expectedValue),
-                        '*=': actualValue.includes(expectedValue),
-                        '~=': actualValue.trim() === expectedValue,
-                        '|=': actualValue.split('-')[0] === expectedValue,
-                    }[
-                        throwIfUndefined(
-                            attr.operator,
-                            'attribute operator was undefined when value was set (this should NEVER happen)',
-                        )
-                    ]
-                })
-            }) ?? []
+                if (!('value' in attr)) {
+                    // eg. sap.m.Button[attr]
+                    return true
+                }
+                const expectedValue = (attr.value as AstString).value
+                return {
+                    '=': actualValue === expectedValue,
+                    '^=': actualValue.startsWith(expectedValue),
+                    '$=': actualValue.endsWith(expectedValue),
+                    '*=': actualValue.includes(expectedValue),
+                    '~=': actualValue.trim() === expectedValue,
+                    '|=': actualValue.split('-')[0] === expectedValue,
+                }[
+                    throwIfUndefined(
+                        attr.operator,
+                        'attribute operator was undefined when value was set (this should NEVER happen)',
+                    )
+                ]
+            })
+        })
         for (const control of controls) {
             const element = control.getDomRef()
             if (
