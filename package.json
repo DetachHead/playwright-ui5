@@ -27,7 +27,7 @@
     "url": "https://github.com/DetachHead/playwright-ui5.git"
   },
   "devDependencies": {
-    "@detachhead/eslint-config": "^1.5.0",
+    "@detachhead/eslint-config": "^1.5.4",
     "@playwright/test": "1.61.1",
     "@sapui5/ts-types-esm": "^1.123.1",
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
