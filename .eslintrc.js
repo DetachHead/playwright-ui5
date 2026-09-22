@@ -20,6 +20,7 @@ const config = {
                     '.eslintrc.cjs',
                     'src/browser/**/*.ts',
                     'tests/**/*.ts',
+                    '*.ts',
                 ],
             },
         ],
