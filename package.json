@@ -27,44 +27,26 @@
     "url": "https://github.com/DetachHead/playwright-ui5.git"
   },
   "devDependencies": {
-    "@detachhead/eslint-config": "^1.5.0",
-    "@playwright/test": "1.61.1",
+    "@playwright/test": "1.63.0",
     "@sapui5/ts-types-esm": "^1.123.1",
-    "@trivago/prettier-plugin-sort-imports": "^4.1.1",
-    "@types/eslint": "^8.4.6",
-    "@types/is-ci": "^3.0.0",
-    "@types/lodash": "^4.17.0",
-    "@types/node": "^20.12.6",
-    "@types/three": "^0.150.2",
-    "esbuild": "^0.15.5",
-    "is-ci": "^3.0.1",
-    "prettier": "^2.8.8",
-    "rimraf": "^3.0.2",
-    "typescript": "5.5.0-dev.20240429"
+    "@types/is-ci": ">=3.0.0",
+    "@types/lodash": ">=4.17.0",
+    "@types/node": ">=20.12.6",
+    "@types/three": ">=0.150.2",
+    "esbuild": ">=0.15.5",
+    "is-ci": ">=3.0.1",
+    "rimraf": ">=3.0.2",
+    "typescript": ">=7"
   },
   "dependencies": {
-    "css-selector-parser": "^2",
-    "fontoxpath": "^3.30.3",
-    "lodash": "^4.17.21",
-    "playwright-core": "^1.43.0",
-    "throw-expression": "^1.0.2",
-    "xmlbuilder2": "^3.1.1"
+    "css-selector-parser": ">=2",
+    "fontoxpath": ">=3.30.3",
+    "lodash": ">=4.17.21",
+    "playwright-core": ">=1.43.0",
+    "throw-expression": ">=1.0.2",
+    "xmlbuilder2": ">=3.1.1"
   },
   "devEngines": {
     "runtime": {"name": "node", "version": "26.3.1"}
-  },
-  "//": [
-    "https://github.com/trivago/prettier-plugin-sort-imports/issues/204#issuecomment-1431287240",
-    "https://github.com/DetachHead/eslint-plugin-detachhead/blob/master/docs/rules/suggestions-as-errors.md#troubleshooting"
-  ],
-  "overrides": {
-    "@trivago/prettier-plugin-sort-imports": {
-      "@babel/core": "7.20.12",
-      "@babel/parser": "7.20.15",
-      "@babel/traverse": "7.20.13"
-    },
-    "typescript": {
-      ".": "5.5.0-dev.20240429"
-    }
   }
 }
