@@ -3,6 +3,7 @@
         "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
         "ms-playwright.playwright",
-        "github.vscode-github-actions"
+        "github.vscode-github-actions",
+        "detachhead.vsenv" // https://github.com/microsoft/playwright/issues/43033
     ]
 }
