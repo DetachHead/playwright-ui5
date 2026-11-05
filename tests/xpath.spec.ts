@@ -52,7 +52,11 @@ test.describe("ui5 site", () => {
       );
     });
     test("debug-xml function", async ({ page }) => {
-      await page.locator("ui5_xpath=//*").visible().first().waitFor();
+      await page
+        .locator("ui5_xpath=//sap.ui.core.ComponentContainer/*")
+        .visible()
+        .first()
+        .waitFor();
       await expect(page.locator("ui5_xpath=ui5:debug-xml(/*)").isVisible()).rejects.toThrow(
         new RegExp(escapeRegExp('<sap.ui.core.ComponentContainer id="__container0">'), "u"),
       );
