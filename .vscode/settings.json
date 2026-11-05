@@ -1,43 +1,44 @@
 {
-    "js/ts.tsdk.path": "node_modules/typescript/lib",
-    "js/ts.tsdk.promptToUseWorkspaceVersion": true,
-    "editor.formatOnSave": true,
-    "prettier.configPath": ".prettierrc.json",
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "always",
-        "source.organizeImports": "never"
-    },
-    "eslint.validate": ["typescript"],
-    "git.allowForcePush": true,
-    "git.autofetch": "all",
-    "git.autoStash": true,
-    "git.pruneOnFetch": true,
-    "git.rebaseWhenSync": true,
-    "git.suggestSmartCommit": false,
-    "git.supportCancellation": true,
-    "git.useCommitInputAsStashMessage": true,
-    "diffEditor.ignoreTrimWhitespace": false,
-    "files.eol": "\n",
-    "editor.acceptSuggestionOnCommitCharacter": false,
-    "git.useEditorAsCommitInput": false,
-    "terminal.integrated.env.windows": {
-        // on windows we can do this to add pnpm.cmd to the PATH
-        // TODO: solution for linux/macos
-        "PATH": "${workspaceFolder};${workspaceFolder}/node_modules/.bin;${env:PATH}",
-        // we deliberately only set this for windows because the npm scripts that call ./pnpm.cmd will otherwise fail.
-        // but on linux, enabling the shell emulator causes scripts that call ./pnpm.cmd to fail...
-        "pnpm_config_shell_emulator": "true"
-    },
-    "terminal.integrated.env.osx": {
-        "PATH": "${workspaceFolder}/node_modules/.bin:${env:PATH}"
-    },
-    "terminal.integrated.env.linux": {
-        "PATH": "${workspaceFolder}/node_modules/.bin:${env:PATH}"
-    },
-    "chat.disableAIFeatures": true,
-    "telemetry.feedback.enabled": false,
-    "npm.packageManager": "pnpm",
-    "npm.scriptRunner": "pnpm",
-    "vsenv.paths": ["node_modules/.bin"]
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
+  "editor.formatOnSave": true,
+  "[javascript][typescript][json][jsonc][yaml][github-actions-workflow][markdown]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always",
+    "source.organizeImports": "never"
+  },
+  "eslint.validate": ["typescript"],
+  "git.allowForcePush": true,
+  "git.autofetch": "all",
+  "git.autoStash": true,
+  "git.pruneOnFetch": true,
+  "git.rebaseWhenSync": true,
+  "git.suggestSmartCommit": false,
+  "git.supportCancellation": true,
+  "git.useCommitInputAsStashMessage": true,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "files.eol": "\n",
+  "editor.acceptSuggestionOnCommitCharacter": false,
+  "git.useEditorAsCommitInput": false,
+  "terminal.integrated.env.windows": {
+    // on windows we can do this to add pnpm.cmd to the PATH
+    // TODO: solution for linux/macos
+    "PATH": "${workspaceFolder};${workspaceFolder}/node_modules/.bin;${env:PATH}",
+    // we deliberately only set this for windows because the npm scripts that call ./pnpm.cmd will otherwise fail.
+    // but on linux, enabling the shell emulator causes scripts that call ./pnpm.cmd to fail...
+    "pnpm_config_shell_emulator": "true"
+  },
+  "terminal.integrated.env.osx": {
+    "PATH": "${workspaceFolder}/node_modules/.bin:${env:PATH}"
+  },
+  "terminal.integrated.env.linux": {
+    "PATH": "${workspaceFolder}/node_modules/.bin:${env:PATH}"
+  },
+  "chat.disableAIFeatures": true,
+  "telemetry.feedback.enabled": false,
+  "npm.packageManager": "pnpm",
+  "npm.scriptRunner": "pnpm",
+  "vsenv.paths": ["node_modules/.bin"]
 }

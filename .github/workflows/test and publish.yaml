@@ -1,96 +1,107 @@
 name: test-and-publish
 on:
-    - push
+  - push
 
 permissions:
-    id-token: write
-    pages: write
+  id-token: write
+  pages: write
 
 jobs:
-    build-and-test:
-        runs-on: ubuntu-latest
-        container:
-            image: mcr.microsoft.com/playwright:v1.64.1
-            options: --user 1001
-        steps:
-            - uses: actions/checkout@v4
-            - run: ./pnpm.cmd run check
-            - name: upload compiled code
-              uses: actions/upload-artifact@v4
-              with:
-                  name: build
-                  path: dist
-              env:
-                  CI: true
-            - name: upload playwright report
-              uses: actions/upload-artifact@v4
-              if: always()
-              with:
-                  name: playwright-report
-                  path: playwright-report/
-                  retention-days: 30
-            - uses: actions/configure-pages@v5
-              if: always()
-            - name: Upload playwright report to github pages
-              uses: actions/upload-pages-artifact@v3
-              if: always()
-              with:
-                  path: playwright-report/
-            - name: Deploy playwright report to Github Pages
-              if: always()
-              id: deployment
-              uses: actions/deploy-pages@v4
-              with:
-                  # this doesnt work yet so there can only be one deployed playwright report at a time across all PRs
-                  # https://github.com/actions/deploy-pages/issues/180
-                  preview: true
-            - name: trace report url
-              if: always()
-              run: echo "# [click here to view the playwright report](https://detachhead.github.io/playwright-ui5)" >> $GITHUB_STEP_SUMMARY
-    publish:
-        name: publish
-        runs-on: ubuntu-latest
-        needs: build-and-test
-        # https://github.com/marvinpinto/actions/issues/340#issuecomment-983254674
-        permissions:
-            id-token: write
-            pages: write
-            contents: write
-            packages: write
-            pull-requests: read
-        steps:
-            - uses: actions/checkout@v4
-            - run: echo ::set-output name=CURRENT_VERSION::$(node -p "require(\"./package.json\").version")
-              id: current-version
-            - if: github.ref == 'refs/heads/master'
-              run: echo ::set-output name=VERSION_INFO::$(./pnpm.cmd view $(node -p "require(\"./package.json\").name")@=${{ steps.current-version.outputs.CURRENT_VERSION }})
-              id: version-was-changed
-            - uses: actions/download-artifact@v4
-              # need to publish if the branch isn't master, or it is master and the version in package.json hasn't been published yet
-              if: github.ref != 'refs/heads/master' || steps.version-was-changed.outputs.VERSION_INFO == ''
-              with:
-                  name: build
-                  path: dist
+  build-and-test:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1
+      options: --user 1001
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./pnpm.cmd run check
+      - name: upload compiled code
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: dist
+        env:
+          CI: true
+      - name: upload playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+      - uses: actions/configure-pages@v5
+        if: always()
+      - name: Upload playwright report to github pages
+        uses: actions/upload-pages-artifact@v3
+        if: always()
+        with:
+          path: playwright-report/
+      - name: Deploy playwright report to Github Pages
+        if: always()
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          # this doesnt work yet so there can only be one deployed playwright report at a time across all PRs
+          # https://github.com/actions/deploy-pages/issues/180
+          preview: true
+      - name: trace report url
+        if: always()
+        run:
+          echo "# [click here to view the playwright
+          report](https://detachhead.github.io/playwright-ui5)" >> $GITHUB_STEP_SUMMARY
+  publish:
+    name: publish
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    # https://github.com/marvinpinto/actions/issues/340#issuecomment-983254674
+    permissions:
+      id-token: write
+      pages: write
+      contents: write
+      packages: write
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+      - run:
+          echo ::set-output name=CURRENT_VERSION::$(node -p "require(\"./package.json\").version")
+        id: current-version
+      - if: github.ref == 'refs/heads/master'
+        run:
+          echo ::set-output name=VERSION_INFO::$(./pnpm.cmd view $(node -p
+          "require(\"./package.json\").name")@=${{ steps.current-version.outputs.CURRENT_VERSION }})
+        id: version-was-changed
+      - uses: actions/download-artifact@v4
+        # need to publish if the branch isn't master, or it is master and the version in package.json hasn't been published yet
+        if:
+          github.ref != 'refs/heads/master' || steps.version-was-changed.outputs.VERSION_INFO == ''
+        with:
+          name: build
+          path: dist
 
-            # publish canary version on every push to every branch except master
-            - name: canary version
-              if: github.ref != 'refs/heads/master'
-              run: ./pnpm.cmd version ${{ steps.current-version.outputs.CURRENT_VERSION }}-$GITHUB_SHA --no-git-tag-version
-            - name: canary publish
-              if: github.ref != 'refs/heads/master'
-              run: ./pnpm.cmd publish
+      # publish canary version on every push to every branch except master
+      - name: canary version
+        if: github.ref != 'refs/heads/master'
+        run:
+          ./pnpm.cmd version ${{ steps.current-version.outputs.CURRENT_VERSION }}-$GITHUB_SHA
+          --no-git-tag-version
+      - name: canary publish
+        if: github.ref != 'refs/heads/master'
+        run: ./pnpm.cmd publish
 
-            # publish & github release if master, and the version in package.json was changed
-            - name: publish
-              if: github.ref == 'refs/heads/master' && steps.version-was-changed.outputs.VERSION_INFO == ''
-              run: ./pnpm.cmd publish
-            - run: echo ::set-output name=PACKAGE::$(./pnpm.cmd pack)
-              id: package
-              if: github.ref == 'refs/heads/master' && steps.version-was-changed.outputs.VERSION_INFO == ''
-            - uses: marvinpinto/action-automatic-releases@v1.2.1
-              if: github.ref == 'refs/heads/master' && steps.version-was-changed.outputs.VERSION_INFO == ''
-              with:
-                  repo_token: ${{ secrets.GITHUB_TOKEN }}
-                  prerelease: false
-                  files: ${{ steps.package.outputs.PACKAGE }}
-                  automatic_release_tag: ${{ steps.current-version.outputs.CURRENT_VERSION }}
+      # publish & github release if master, and the version in package.json was changed
+      - name: publish
+        if:
+          github.ref == 'refs/heads/master' && steps.version-was-changed.outputs.VERSION_INFO == ''
+        run: ./pnpm.cmd publish
+      - run: echo ::set-output name=PACKAGE::$(./pnpm.cmd pack)
+        id: package
+        if:
+          github.ref == 'refs/heads/master' && steps.version-was-changed.outputs.VERSION_INFO == ''
+      - uses: marvinpinto/action-automatic-releases@v1.2.1
+        if:
+          github.ref == 'refs/heads/master' && steps.version-was-changed.outputs.VERSION_INFO == ''
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: false
+          files: ${{ steps.package.outputs.PACKAGE }}
+          automatic_release_tag: ${{ steps.current-version.outputs.CURRENT_VERSION }}
