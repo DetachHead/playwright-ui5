@@ -1,0 +1,2 @@
+[aliases]
+pnpm = "gh/pnpm/pnpm@12.15.0"

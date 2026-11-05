@@ -14,11 +14,7 @@ jobs:
             options: --user 1001
         steps:
             - uses: actions/checkout@v4
-            - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
-              with:
-                  node-version-file: package.json
-            - run: npm ci
-            - run: npm run check
+            - run: ./pnpm.cmd run check
             - name: upload compiled code
               uses: actions/upload-artifact@v4
               with:
@@ -64,13 +60,10 @@ jobs:
             pull-requests: read
         steps:
             - uses: actions/checkout@v4
-            - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
-              with:
-                  node-version-file: package.json
             - run: echo ::set-output name=CURRENT_VERSION::$(node -p "require(\"./package.json\").version")
               id: current-version
             - if: github.ref == 'refs/heads/master'
-              run: echo ::set-output name=VERSION_INFO::$(npm view $(node -p "require(\"./package.json\").name")@=${{ steps.current-version.outputs.CURRENT_VERSION }})
+              run: echo ::set-output name=VERSION_INFO::$(./pnpm.cmd view $(node -p "require(\"./package.json\").name")@=${{ steps.current-version.outputs.CURRENT_VERSION }})
               id: version-was-changed
             - uses: actions/download-artifact@v4
               # need to publish if the branch isn't master, or it is master and the version in package.json hasn't been published yet
@@ -82,23 +75,16 @@ jobs:
             # publish canary version on every push to every branch except master
             - name: canary version
               if: github.ref != 'refs/heads/master'
-              run: npm version ${{ steps.current-version.outputs.CURRENT_VERSION }}-$GITHUB_SHA --git-tag-version false
+              run: ./pnpm.cmd version ${{ steps.current-version.outputs.CURRENT_VERSION }}-$GITHUB_SHA --no-git-tag-version
             - name: canary publish
               if: github.ref != 'refs/heads/master'
-              uses: JS-DevTools/npm-publish@v3
-              with:
-                  token: ${{ secrets.NPM_TOKEN }}
-                  access: public
-                  tag: canary
+              run: ./pnpm.cmd publish
 
             # publish & github release if master, and the version in package.json was changed
             - name: publish
               if: github.ref == 'refs/heads/master' && steps.version-was-changed.outputs.VERSION_INFO == ''
-              uses: JS-DevTools/npm-publish@v3
-              with:
-                  token: ${{ secrets.NPM_TOKEN }}
-                  access: public
-            - run: echo ::set-output name=PACKAGE::$(npm pack)
+              run: ./pnpm.cmd publish
+            - run: echo ::set-output name=PACKAGE::$(./pnpm.cmd pack)
               id: package
               if: github.ref == 'refs/heads/master' && steps.version-was-changed.outputs.VERSION_INFO == ''
             - uses: marvinpinto/action-automatic-releases@v1.2.1
