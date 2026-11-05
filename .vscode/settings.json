@@ -22,7 +22,12 @@
     "editor.acceptSuggestionOnCommitCharacter": false,
     "git.useEditorAsCommitInput": false,
     "terminal.integrated.env.windows": {
-        "PATH": "${workspaceFolder}/node_modules/.bin;${env:PATH}"
+        // on windows we can do this to add pnpm.cmd to the PATH
+        // TODO: solution for linux/macos
+        "PATH": "${workspaceFolder};${workspaceFolder}/node_modules/.bin;${env:PATH}",
+        // we deliberately only set this for windows because the npm scripts that call ./pnpm.cmd will otherwise fail.
+        // but on linux, enabling the shell emulator causes scripts that call ./pnpm.cmd to fail...
+        "pnpm_config_shell_emulator": "true"
     },
     "terminal.integrated.env.osx": {
         "PATH": "${workspaceFolder}/node_modules/.bin:${env:PATH}"
@@ -31,5 +36,8 @@
         "PATH": "${workspaceFolder}/node_modules/.bin:${env:PATH}"
     },
     "chat.disableAIFeatures": true,
-    "telemetry.feedback.enabled": false
+    "telemetry.feedback.enabled": false,
+    "npm.packageManager": "pnpm",
+    "npm.scriptRunner": "pnpm",
+    "vsenv.paths": ["node_modules/.bin"]
 }

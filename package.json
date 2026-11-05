@@ -9,15 +9,15 @@
   "scripts": {
     "test": "tsc -p tests/tsconfig.json && playwright test",
     "lint:check": "eslint .",
-    "lint:fix": "npm run lint:check -- --fix",
+    "lint:fix": "./pnpm.cmd run lint:check -- --fix",
     "format:check": "prettier --check .",
     "format:fix": "prettier --write .",
     "build:browser": "tsc -p src/browser/tsconfig.json && esbuild src/browser/css.ts --bundle --define:global=window --format=cjs --outdir=dist/browser && esbuild src/browser/xpath.ts --bundle --define:global=window --format=cjs --outdir=dist/browser",
     "build:node": "tsc -p src/node/tsconfig.json",
     "typecheck:config-files": "tsc",
-    "build": "rimraf ./dist && npm run build:browser && npm run build:node",
-    "check": "npm run typecheck:config-files && npm run build && npm run test && npm run lint:check && npm run format:check",
-    "setup": "npm ci && playwright install-deps && playwright install"
+    "build": "rimraf ./dist && ./pnpm.cmd run build:browser && ./pnpm.cmd run build:node",
+    "check": "./pnpm.cmd run typecheck:config-files && ./pnpm.cmd run build && ./pnpm.cmd run test && ./pnpm.cmd run lint:check && ./pnpm.cmd run format:check",
+    "setup": "./pnpm.cmd install && playwright install-deps && playwright install"
   },
   "keywords": [],
   "author": "detachhead",
@@ -37,6 +37,7 @@
     "@types/node": "^20.12.6",
     "@types/three": "^0.150.2",
     "esbuild": "^0.15.5",
+    "eslint": "^8.13.0",
     "is-ci": "^3.0.1",
     "prettier": "^2.8.8",
     "rimraf": "^3.0.2",
@@ -51,7 +52,11 @@
     "xmlbuilder2": "^3.1.1"
   },
   "devEngines": {
-    "runtime": {"name": "node", "version": "26.3.1"}
+    "runtime": {
+      "name": "node",
+      "version": "26.3.1",
+      "onFail": "download"
+    }
   },
   "//": [
     "https://github.com/trivago/prettier-plugin-sort-imports/issues/204#issuecomment-1431287240",
