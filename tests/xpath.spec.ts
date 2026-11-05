@@ -13,7 +13,7 @@ test.describe('ui5 site', () => {
             ui5Tester.navigateToControlSample(page, 'sap.m', 'sap.m.sample.Button'),
         )
         test.describe('any control', () => {
-            test('*', ({ page }) => expect(page.locator('ui5_xpath=//*')).toHaveCount(43))
+            test('*', ({ page }) => expect(page.locator('ui5_xpath=//*')).toHaveCount(45))
             test('id', ({ page }) =>
                 expect(page.locator('ui5_xpath=//*[@id="__button1"]')).toHaveCount(1))
             test.describe('ui5:property function', () => {})
@@ -54,14 +54,14 @@ test.describe('ui5 site', () => {
             )
         })
         test('debug-xml function', async ({ page }) => {
-            await page.locator('ui5_xpath=//*').first().waitFor()
+            await page.locator('ui5_xpath=//*').locator('visible=true').first().waitFor()
             await expect(page.locator('ui5_xpath=ui5:debug-xml(/*)').isVisible()).rejects.toThrow(
                 new RegExp(escapeRegExp('<sap.ui.core.ComponentContainer id="__container0">'), 'u'),
             )
         })
         test('root element', async ({ page }) => {
             await expect(page.locator('ui5_xpath=/root')).toHaveCount(0) // doesn't match anything because it's not a real ui5 element
-            await expect(page.locator('ui5_xpath=/root/*')).toHaveCount(1)
+            await expect(page.locator('ui5_xpath=/root/*').locator('visible=true')).toHaveCount(1)
         })
         test.describe('concatenated with other locators', () => {
             test('child, explicit .', ({ page }) =>
