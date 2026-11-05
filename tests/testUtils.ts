@@ -1,51 +1,52 @@
-import type { SelectorEngine } from '../src/node/main'
-import { type Page, selectors } from '@playwright/test'
-import { throwIfUndefined } from 'throw-expression'
+import { type Page, selectors } from "@playwright/test";
+import { throwIfUndefined } from "throw-expression";
 
-type SelectorEngineName = 'css' | 'xpath'
+import type { SelectorEngine } from "../src/node/main";
+
+type SelectorEngineName = "css" | "xpath";
 
 export class Ui5Tester {
-    selectorEngineId: `ui5_${SelectorEngineName}`
+  selectorEngineId: `ui5_${SelectorEngineName}`;
 
-    constructor(private selectorEngineName: SelectorEngineName) {
-        this.selectorEngineId = `ui5_${selectorEngineName}`
-    }
-    navigateToUi5DocsPage = async (page: Page, path: `/${string}`) => {
-        // TODO: we have no control over this site, and versions get removed from it regularly.
-        // should host our version or make our own minimal ui5 test app or something
-        await page.goto(`https://ui5.sap.com/1.154.0${path}`)
-        await page.waitForSelector(
-            `${this.selectorEngineId}=${
-                this.selectorEngineName === 'css' ? '*' : '//*'
-            } >> visible=true`,
-        )
-    }
+  constructor(private selectorEngineName: SelectorEngineName) {
+    this.selectorEngineId = `ui5_${selectorEngineName}`;
+  }
+  navigateToUi5DocsPage = async (page: Page, path: `/${string}`) => {
+    // TODO: we have no control over this site, and versions get removed from it regularly.
+    // should host our version or make our own minimal ui5 test app or something
+    await page.goto(`https://ui5.sap.com/1.154.0${path}`);
+    await page.waitForSelector(
+      `${this.selectorEngineId}=${this.selectorEngineName === "css" ? "*" : "//*"} >> visible=true`,
+    );
+  };
 
-    navigateToControlSample = (page: Page, lib: string, sampleId: string) =>
-        this.navigateToUi5DocsPage(
-            page,
-            `/resources/sap/ui/documentation/sdk/index.html?sap-ui-xx-sample-id=${sampleId}&sap-ui-xx-sample-lib=${lib}&sap-ui-xx-sample-origin=.&sap-ui-xx-dk-origin=https%3A%2F%2Fui5.sap.com&sap-ui-theme=sap_horizon_dark&sap-ui-rtl=false&sap-ui-density=sapUiSizeCompact`,
-        )
+  navigateToControlSample = (page: Page, lib: string, sampleId: string) =>
+    this.navigateToUi5DocsPage(
+      page,
+      `/resources/sap/ui/documentation/sdk/index.html?sap-ui-xx-sample-id=${sampleId}&sap-ui-xx-sample-lib=${lib}&sap-ui-xx-sample-origin=.&sap-ui-xx-dk-origin=https%3A%2F%2Fui5.sap.com&sap-ui-theme=sap_horizon_dark&sap-ui-rtl=false&sap-ui-density=sapUiSizeCompact`,
+    );
 
-    registerSelectorEngine = async () =>
-        selectors.register(
-            this.selectorEngineId,
-            // need dynamic import, otherwise it could import outdated code:
-            throwIfUndefined(
-                ((await import('../dist/node/main.js')) as Record<string, SelectorEngine>)[
-                    this.selectorEngineName
-                ],
-                `invalid selector engine name: ${this.selectorEngineName}`,
-            ),
-        )
+  registerSelectorEngine = async () =>
+    selectors.register(
+      this.selectorEngineId,
+      // need dynamic import, otherwise it could import outdated code:
+      throwIfUndefined(
+        ((await import("../dist/node/main.js")) as Record<string, SelectorEngine>)[
+          this.selectorEngineName
+        ],
+        `invalid selector engine name: ${this.selectorEngineName}`,
+      ),
+    );
 }
 
 /**
- *  fixes this stupid shit in playwright where the default timeout is infinite when running with a debugger
+ * Fixes this stupid shit in playwright where the default timeout is infinite when running with a
+ * debugger
+ *
  * @see https://github.com/microsoft/playwright/issues/10312
  */
 export const fixDefaultTimeout = (page: Page) => {
-    const defaultTimeout = 30000
-    page.setDefaultTimeout(defaultTimeout)
-    page.setDefaultNavigationTimeout(defaultTimeout)
-}
+  const defaultTimeout = 30000;
+  page.setDefaultTimeout(defaultTimeout);
+  page.setDefaultNavigationTimeout(defaultTimeout);
+};

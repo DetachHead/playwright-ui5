@@ -1,11 +1,11 @@
 {
-    "extends": "../../tsconfig.json",
-    "compilerOptions": {
-        "types": ["@sapui5/ts-types-esm", "@types/three"],
-        "lib": ["es2021", "dom"],
-        "noEmit": true,
-        "skipLibCheck": true // https://github.com/SAP/ui5-typescript/issues/289
-    },
-    "include": ["**/*.ts"],
-    "exclude": []
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "types": ["@sapui5/ts-types-esm", "@types/three"],
+    "lib": ["es2021", "dom"],
+    "noEmit": true,
+    "skipLibCheck": true // https://github.com/SAP/ui5-typescript/issues/289
+  },
+  "include": ["**/*.ts"],
+  "exclude": []
 }
