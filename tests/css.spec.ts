@@ -12,7 +12,7 @@ test.describe('ui5 site - button', () => {
         ui5Tester.navigateToControlSample(page, 'sap.m', 'sap.m.sample.Button'),
     )
     test.describe('any control', () => {
-        test('*', ({ page }) => expect(page.locator('ui5_css=*')).toHaveCount(45))
+        test('*', ({ page }) => expect(page.locator('ui5_css=*')).toHaveCount(47))
         test('id', ({ page }) => expect(page.locator('ui5_css=#__button1')).toHaveCount(1))
         test('property', ({ page }) => expect(page.locator('ui5_css=[text]')).toHaveCount(25))
     })

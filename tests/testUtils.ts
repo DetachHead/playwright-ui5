@@ -13,7 +13,7 @@ export class Ui5Tester {
     navigateToUi5DocsPage = async (page: Page, path: `/${string}`) => {
         // TODO: we have no control over this site, and versions get removed from it regularly.
         // should host our version or make our own minimal ui5 test app or something
-        await page.goto(`https://ui5.sap.com/1.130.11${path}`)
+        await page.goto(`https://ui5.sap.com/1.154.0${path}`)
         await page.waitForSelector(
             `${this.selectorEngineId}=${
                 this.selectorEngineName === 'css' ? '*' : '//*'
