@@ -31,8 +31,8 @@ importers:
         specifier: ^1.5.0
         version: 1.5.4(@eslint-community/eslint-plugin-eslint-comments@4.8.1(eslint@8.57.1(supports-color@7.2.0)))(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.5.0-dev.20240429))(eslint@8.57.1(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.5.0-dev.20240429))(eslint-plugin-detachhead@1.3.1(eslint@8.57.1(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.5.0-dev.20240429))(eslint-plugin-import@2.32.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.5.0-dev.20240429))(eslint@8.57.1(supports-color@7.2.0))(supports-color@7.2.0))(eslint-plugin-jsdoc@65.4.3(eslint@8.57.1(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.5.0-dev.20240429))(eslint-plugin-prefer-arrow@1.2.3(eslint@8.57.1(supports-color@7.2.0)))(supports-color@7.2.0)(typescript@5.5.0-dev.20240429)
       '@playwright/test':
-        specifier: 1.61.1
-        version: 1.61.1
+        specifier: 1.64.1
+        version: 1.64.1
       '@sapui5/ts-types-esm':
         specifier: ^1.123.1
         version: 1.148.1
@@ -57,6 +57,9 @@ importers:
       esbuild:
         specifier: ^0.15.5
         version: 0.15.18
+      eslint:
+        specifier: ^8.13.0
+        version: 8.57.1(supports-color@7.2.0)
       is-ci:
         specifier: ^3.0.1
         version: 3.0.1
@@ -255,9 +258,9 @@ packages:
     resolution: {integrity: sha512-T8TbSnGsxo6TDBJx/Sgv/BlVJL3tshxZP7Aq5R1mSnM5OcHY2dQaxLMu2+E8u3gN0MLOzdjurqN4ZRVuzQycOQ==}
     engines: {node: '>=8.0'}
 
-  '@playwright/test@1.61.1':
-    resolution: {integrity: sha512-8nKv6+0RJSL9FE4jYOEGXnPeM/Hg12qZpmqzZjRh3qM0Y7c3z1mrOTfFLids72RDQYVh9WpLEfR5WdpNX4fkig==}
-    engines: {node: '>=18'}
+  '@playwright/test@1.64.1':
+    resolution: {integrity: sha512-IaYGml/nSOiZWROfPtuIL7neuu9qDOZ3TNvNljUIrhDMxiGTgPjzj/g9p9RxpS2tSepPDRY+UwAaEeiKtUvIAg==}
+    engines: {node: '>=20'}
     hasBin: true
 
   '@rtsao/scc@1.1.0':
@@ -994,11 +997,6 @@ packages:
   fs.realpath@1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
 
-  fsevents@2.3.2:
-    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
-    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
-    os: [darwin]
-
   function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
 
@@ -1547,19 +1545,14 @@ packages:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
 
-  playwright-core@1.61.1:
-    resolution: {integrity: sha512-h7Qlt6m4REp25qvIdvbDtVmD4LqVXfpRxhORv9L0jzETM05p4fuPJ3dKyuSXQxDSbXnmS79HAgi9589lGSpLkg==}
-    engines: {node: '>=18'}
-    hasBin: true
-
   playwright-core@1.64.1:
     resolution: {integrity: sha512-BC4s8y6SEVA6Q1rSxZTto8hI1KUI3xXlHGZgvGqP4IqPdI/a6FX9H29IDNz7vKo9l21b6LfYosScPL6M3xxyDQ==}
     engines: {node: '>=20'}
     hasBin: true
 
-  playwright@1.61.1:
-    resolution: {integrity: sha512-DWnY5o3YbLWK4GovuAVwpqL+1VwGNdUGrRr++8j8PtQQzvAVZUIMjKQ90fY689sEJZJBbZVw1rXaOKSTitkzPQ==}
-    engines: {node: '>=18'}
+  playwright@1.64.1:
+    resolution: {integrity: sha512-HCrVhHr5QQuwYoswEUGTb7gGp522yflbv/ST8nF4sFWGuLjQCt17Q/EubpGGSNKYn1tsTCPZxqHhHCfVURu7UA==}
+    engines: {node: '>=20'}
     hasBin: true
 
   possible-typed-array-names@1.1.0:
@@ -2075,9 +2068,9 @@ snapshots:
 
   '@oozcitak/util@8.3.8': {}
 
-  '@playwright/test@1.61.1':
+  '@playwright/test@1.64.1':
     dependencies:
-      playwright: 1.61.1
+      playwright: 1.64.1
 
   '@rtsao/scc@1.1.0': {}
 
@@ -2966,9 +2959,6 @@ snapshots:
 
   fs.realpath@1.0.0: {}
 
-  fsevents@2.3.2:
-    optional: true
-
   function-bind@1.1.2: {}
 
   function.prototype.name@1.2.0:
@@ -3406,15 +3396,11 @@ snapshots:
 
   picomatch@4.0.7: {}
 
-  playwright-core@1.61.1: {}
-
   playwright-core@1.64.1: {}
 
-  playwright@1.61.1:
+  playwright@1.64.1:
     dependencies:
-      playwright-core: 1.61.1
-    optionalDependencies:
-      fsevents: 2.3.2
+      playwright-core: 1.64.1
 
   possible-typed-array-names@1.1.0: {}
 
