@@ -1,6 +1,7 @@
 {
   "js/ts.tsdk.path": "node_modules/typescript/lib",
   "js/ts.tsdk.promptToUseWorkspaceVersion": true,
+  "js/ts.experimental.useTsgo": true,
   "editor.formatOnSave": true,
   "[javascript][typescript][json][jsonc][yaml][github-actions-workflow][markdown]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
