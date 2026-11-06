@@ -1,15 +1,11 @@
 {
-  "js/ts.tsdk.path": "node_modules/typescript/lib",
-  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
   "editor.formatOnSave": true,
   "[javascript][typescript][json][jsonc][yaml][github-actions-workflow][markdown]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
   },
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "always",
     "source.organizeImports": "never"
   },
-  "eslint.validate": ["typescript"],
   "git.allowForcePush": true,
   "git.autofetch": "all",
   "git.autoStash": true,
@@ -18,6 +14,7 @@
   "git.suggestSmartCommit": false,
   "git.supportCancellation": true,
   "git.useCommitInputAsStashMessage": true,
+  "git.blame.editorDecoration.enabled": true,
   "diffEditor.ignoreTrimWhitespace": false,
   "files.eol": "\n",
   "editor.acceptSuggestionOnCommitCharacter": false,
@@ -40,5 +37,18 @@
   "telemetry.feedback.enabled": false,
   "npm.packageManager": "pnpm",
   "npm.scriptRunner": "pnpm",
-  "vsenv.paths": ["node_modules/.bin"]
+  "vsenv.paths": ["node_modules/.bin"],
+  // avoid the typescript 7 extension because it's not available in vscodium.
+  // see https://github.com/VSCodium/vscodium/issues/3016
+  // we have to do this by configuring it to use tsgo even tho we don't install the extension
+  // because there doesn't seem to be a way to disable tsserver (the old built in one)
+  "js/ts.experimental.useTsgo": true,
+  "lsp_generic_client.servers": {
+    "typescript": {
+      "name": "typescript",
+      "path": "node_modules/.bin/tsc",
+      "args": ["--lsp", "--stdio"],
+      "documentSelector": ["typescript", "javascript"]
+    }
+  }
 }

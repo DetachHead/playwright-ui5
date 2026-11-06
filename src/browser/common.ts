@@ -12,18 +12,20 @@ declare global {
 
   // ideally these would be defined like `const Element = Ui5Element` instead of
   // these fake subclasses. see https://github.com/microsoft/TypeScript/issues/36348
-  namespace sap.ui.core {
-    class Element extends UI5Element {}
-    const Core: {
-      // no idea how this works, but it seems to be a class when using the global
-      // declaration but an instance when importing it as a module.
-      // https://github.com/SAP/ui5-typescript/issues/443#issuecomment-2074074078
-      new (): UI5Core;
-      (): UI5Core;
-    };
-  }
-  namespace sap.ui.base {
-    class Metadata extends UI5Metadata {}
+  namespace sap.ui {
+    namespace core {
+      class Element extends UI5Element {}
+      const Core: {
+        // no idea how this works, but it seems to be a class when using the global
+        // declaration but an instance when importing it as a module.
+        // https://github.com/SAP/ui5-typescript/issues/443#issuecomment-2074074078
+        new (): UI5Core;
+        (): UI5Core;
+      };
+    }
+    namespace base {
+      class Metadata extends UI5Metadata {}
+    }
   }
 }
 /* eslint-enable @typescript-eslint/no-namespace */

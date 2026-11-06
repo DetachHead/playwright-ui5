@@ -1,12 +1,14 @@
 import { expect, test } from "@playwright/test";
 import { escapeRegExp } from "lodash";
 
-import { Ui5Tester, fixDefaultTimeout } from "./testUtils";
+import { Ui5Tester, fixDefaultTimeout } from "./test-utils";
 
 const ui5Tester = new Ui5Tester("css");
 
 test.beforeAll(() => ui5Tester.registerSelectorEngine());
-test.beforeEach(({ page }) => fixDefaultTimeout(page));
+test.beforeEach(({ page }) => {
+  fixDefaultTimeout(page);
+});
 
 test.describe("ui5 site - button", () => {
   test.beforeEach(({ page }) =>
@@ -134,14 +136,14 @@ test.describe("no ui5 site", () => {
       await page.setContent("<div></div>");
       await page.evaluate(() => {
         // @ts-expect-error https://github.com/microsoft/TypeScript/issues/43434
-        window.sap = {};
+        globalThis.sap = {};
       });
       await expect(page.locator("ui5_css=m.Button")).toHaveCount(0);
     });
     test("ui5 runtime is partially loaded", async ({ page }) => {
       await page.evaluate(() => {
         // @ts-expect-error https://github.com/microsoft/TypeScript/issues/43434
-        window.sap = {
+        globalThis.sap = {
           ui: {},
         };
       });
@@ -163,17 +165,11 @@ test.describe("no ui5 site", () => {
   test.describe("subclass with no tagname", () => {
     test("wildcard", ({ page }) =>
       expect(page.locator("ui5_css=*::subclass").isVisible()).rejects.toThrow(
-        new RegExp(
-          "subclass pseudo-selector cannot be used without specifying a control type",
-          "u",
-        ),
+        /subclass pseudo-selector cannot be used without specifying a control type/u,
       ));
     test("nothing", ({ page }) =>
       expect(page.locator("ui5_css=::subclass").isVisible()).rejects.toThrow(
-        new RegExp(
-          "subclass pseudo-selector cannot be used without specifying a control type",
-          "u",
-        ),
+        /subclass pseudo-selector cannot be used without specifying a control type/u,
       ));
   });
 });

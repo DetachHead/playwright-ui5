@@ -1,7 +1,7 @@
 import { type AstSelector, type AstString, createParser } from "css-selector-parser";
 import { throwIfUndefined } from "throw-expression";
 
-import type { SelectorEngine } from "../common/types";
+import { SelectorEngine } from "../common/types";
 import { Ui5SelectorEngineError, isUi5 } from "./common";
 
 const getAllParents = (element: sap.ui.core.Element): string[] => {
@@ -13,22 +13,6 @@ const getAllParents = (element: sap.ui.core.Element): string[] => {
     return [class_];
   };
   return getParents(element.getMetadata()).map((parent) => parent.getName());
-};
-
-const parseSelector = (selector: string): AstSelector => {
-  if (selector === "") {
-    throw new Error("ui5 selector is empty");
-  }
-  const parsedSelector = parse(selector);
-  parsedSelector.rules.forEach((rule) => {
-    if (rule.ids && rule.ids.length > 1) {
-      throw new Error("multiple ids are not supported");
-    }
-    if (rule.pseudoElement === "subclass" && rule.tag?.type !== "TagName") {
-      throw new Error("subclass pseudo-selector cannot be used without specifying a control type");
-    }
-  });
-  return parsedSelector;
 };
 
 const parse = createParser({
@@ -46,6 +30,22 @@ const parse = createParser({
   },
 });
 
+const parseSelector = (selector: string): AstSelector => {
+  if (selector === "") {
+    throw new Error("ui5 selector is empty");
+  }
+  const parsedSelector = parse(selector);
+  for (const rule of parsedSelector.rules) {
+    if (rule.ids && rule.ids.length > 1) {
+      throw new Error("multiple ids are not supported");
+    }
+    if (rule.pseudoElement === "subclass" && rule.tag?.type !== "TagName") {
+      throw new Error("subclass pseudo-selector cannot be used without specifying a control type");
+    }
+  }
+  return parsedSelector;
+};
+
 function* querySelector(root: Element | Document, selector: AstSelector) {
   for (const rule of selector.rules) {
     if (rule.tag?.type === "TagName" && rule.classNames) {
@@ -60,7 +60,7 @@ function* querySelector(root: Element | Document, selector: AstSelector) {
     }
 
     const controls =
-      // eslint-disable-next-line detachhead/suggestions-as-errors, @typescript-eslint/no-unnecessary-condition -- using the deprecated registry since we still want to support older ui5 versions, seems any part of this can be undefined if the page is in the middle of loading
+      // eslint-disable-next-line typescript/no-deprecated, @typescript-eslint/no-unnecessary-condition -- using the deprecated registry since we still want to support older ui5 versions, seems any part of this can be undefined if the page is in the middle of loading
       sap.ui?.core?.Element?.registry.filter((element) => {
         if (
           (rule.tag?.type === "TagName" &&
@@ -109,18 +109,17 @@ function* querySelector(root: Element | Document, selector: AstSelector) {
       ) {
         continue;
       }
-      if (rule.pseudoClasses) {
-        if (
-          querySelector(
-            element,
-            throwIfUndefined(
-              rule.pseudoClasses[0],
-              '":has" pseudo-class was specified without an argument',
-            ).argument as AstSelector,
-          ).next().done
-        ) {
-          continue;
-        }
+      if (
+        rule.pseudoClasses &&
+        querySelector(
+          element,
+          throwIfUndefined(
+            rule.pseudoClasses[0],
+            '":has" pseudo-class was specified without an argument',
+          ).argument as AstSelector,
+        ).next().done
+      ) {
+        continue;
       }
       yield element;
     }
@@ -134,12 +133,12 @@ function* queryAll(root: Element | Document, selector: string): Generator<Elemen
     if (isUi5()) {
       yield* querySelector(root, parsedSelector);
     }
-  } catch (e) {
-    throw new Ui5SelectorEngineError(selector, e);
+  } catch (error) {
+    throw new Ui5SelectorEngineError(selector, error);
   }
 }
 
 export default {
-  queryAll: (root, selector) => Array.from(queryAll(root, selector)),
+  queryAll: (root, selector) => [...queryAll(root, selector)],
   query: (root, selector) => queryAll(root, selector).next().value,
 } satisfies SelectorEngine;

@@ -1,9 +1,15 @@
 {
   "recommendations": [
     "oxc.oxc-vscode",
-    "dbaeumer.vscode-eslint",
     "ms-playwright.playwright",
     "github.vscode-github-actions",
-    "detachhead.vsenv" // https://github.com/microsoft/playwright/issues/43033
+    "detachhead.vsenv", // https://github.com/microsoft/playwright/issues/43033
+    "maximsmol.vscode-lsp-generic"
+  ],
+  "unwantedRecommendations": [
+    // see comment in .vscode/settings.json where we configure the generic lsp instead.
+    // this has no impact on vscodium users, but we want to prevent the typescript 7 extension
+    // from installing and duplicating lsp functionality for any contributors who may be using vscode
+    "typescriptteam.native-preview"
   ]
 }

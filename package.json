@@ -15,7 +15,7 @@
   "main": "dist/node/main.js",
   "scripts": {
     "test": "tsc -p tests/tsconfig.json && playwright test",
-    "lint:check": "eslint .",
+    "lint:check": "oxlint .",
     "lint:fix": "./pnpm.cmd run lint:check -- --fix",
     "format:check": "oxfmt --check",
     "format:fix": "oxfmt",
@@ -35,25 +35,23 @@
     "xmlbuilder2": "^3.1.1"
   },
   "devDependencies": {
-    "@detachhead/eslint-config": "^1.5.0",
+    "@eslint-community/eslint-plugin-eslint-comments": ">=4.8.1",
     "@playwright/test": "1.64.1",
     "@sapui5/ts-types-esm": "^1.123.1",
-    "@types/eslint": "^8.4.6",
+    "@stylistic/eslint-plugin": ">=5.10.0",
     "@types/is-ci": "^3.0.0",
     "@types/lodash": "^4.17.0",
     "@types/node": "^20.12.6",
     "@types/three": "^0.150.2",
     "esbuild": "^0.15.5",
-    "eslint": "^8.13.0",
+    "eslint": ">=10.14.0",
+    "eslint-plugin-prefer-arrow-functions": ">=3.10.2",
     "is-ci": "^3.0.1",
     "oxfmt": ">=0.76.0",
+    "oxlint": ">=1.91.0",
+    "oxlint-tsgolint": ">=7.0.2005",
     "rimraf": "^3.0.2",
-    "typescript": "5.5.0-dev.20240429"
-  },
-  "overrides": {
-    "typescript": {
-      ".": "5.5.0-dev.20240429"
-    }
+    "typescript": ">=7"
   },
   "devEngines": {
     "runtime": {

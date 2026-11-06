@@ -3,6 +3,7 @@
   "compilerOptions": {
     "types": ["@sapui5/ts-types-esm", "@types/three"],
     "lib": ["es2021", "dom"],
+    "rootDir": "../",
     "noEmit": true,
     "skipLibCheck": true // https://github.com/SAP/ui5-typescript/issues/289
   },

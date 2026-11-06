@@ -1,16 +1,17 @@
 import { type Page, selectors } from "@playwright/test";
 import { throwIfUndefined } from "throw-expression";
 
-import type { SelectorEngine } from "../src/node/main";
+import { SelectorEngine } from "../dist/node/main.js";
 
 type SelectorEngineName = "css" | "xpath";
 
 export class Ui5Tester {
   selectorEngineId: `ui5_${SelectorEngineName}`;
 
-  constructor(private selectorEngineName: SelectorEngineName) {
+  constructor(private readonly selectorEngineName: SelectorEngineName) {
     this.selectorEngineId = `ui5_${selectorEngineName}`;
   }
+
   navigateToUi5DocsPage = async (page: Page, path: `/${string}`) => {
     // TODO: we have no control over this site, and versions get removed from it regularly.
     // should host our version or make our own minimal ui5 test app or something
@@ -31,7 +32,7 @@ export class Ui5Tester {
       this.selectorEngineId,
       // need dynamic import, otherwise it could import outdated code:
       throwIfUndefined(
-        ((await import("../dist/node/main.js")) as Record<string, SelectorEngine>)[
+        ((await import("../dist/node/main.js")) as { [key: string]: SelectorEngine })[
           this.selectorEngineName
         ],
         `invalid selector engine name: ${this.selectorEngineName}`,
@@ -46,7 +47,7 @@ export class Ui5Tester {
  * @see https://github.com/microsoft/playwright/issues/10312
  */
 export const fixDefaultTimeout = (page: Page) => {
-  const defaultTimeout = 30000;
+  const defaultTimeout = 30_000;
   page.setDefaultTimeout(defaultTimeout);
   page.setDefaultNavigationTimeout(defaultTimeout);
 };
