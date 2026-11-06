@@ -1,8 +1,8 @@
-import type { Options } from "fontoxpath";
 import {
   evaluateXPathToFirstNode,
   evaluateXPathToNodes,
   registerCustomXPathFunction,
+  type Options,
 } from "fontoxpath";
 import { throwIfUndefined } from "throw-expression";
 import { create } from "xmlbuilder2";
@@ -25,9 +25,10 @@ const createTreeModelNodes = (node: Element) => {
     let childNode = rootNode.firstElementChild;
     const results = resultArray;
     let subResult = results;
-    // eslint-disable-next-line detachhead/suggestions-as-errors -- Core type is busted https://github.com/SAP/ui5-typescript/issues/443
+    // eslint-disable-next-line typescript/no-deprecated -- Core type is busted https://github.com/SAP/ui5-typescript/issues/443
     const control = sap.ui.getCore().byId(rootNode.id);
 
+    // oxlint-disable-next-line unicorn/prefer-dom-node-dataset -- TODO: should we filter out non-HTMLElement?
     if (rootNode.getAttribute("data-sap-ui") && control) {
       results.push({
         id: control.getId(),
@@ -36,7 +37,8 @@ const createTreeModelNodes = (node: Element) => {
         content: [],
       });
 
-      subResult = throwIfUndefined(results[results.length - 1]).content;
+      subResult = throwIfUndefined(results.at(-1)).content;
+      // oxlint-disable-next-line unicorn/prefer-dom-node-dataset -- see TODO above
     } else if (rootNode.getAttribute("data-sap-ui-area")) {
       results.push({
         id: rootNode.id,
@@ -45,7 +47,7 @@ const createTreeModelNodes = (node: Element) => {
         content: [],
       });
 
-      subResult = throwIfUndefined(results[results.length - 1]).content;
+      subResult = throwIfUndefined(results.at(-1)).content;
     }
 
     while (childNode) {
@@ -64,11 +66,11 @@ const createXmlFromTreeNodes = (treeModelNodes: TreeModelNode[]) => {
     xml = xml.ele("root");
   }
   const inner = (nodes: TreeModelNode[]) => {
-    nodes.forEach((node) => {
+    for (const node of nodes) {
       xml = xml.ele(node.name, { id: node.id });
       inner(node.content);
       xml = xml.up();
-    });
+    }
   };
   inner(treeModelNodes);
   return xml.end({ prettyPrint: true });
@@ -85,7 +87,7 @@ registerCustomXPathFunction(
   "item()*",
   (_, element: Element, name: string) => {
     const id = element.getAttribute("id");
-    // eslint-disable-next-line detachhead/suggestions-as-errors -- using deprecated byId method to support older ui5 versions
+    // eslint-disable-next-line typescript/no-deprecated -- using deprecated byId method to support older ui5 versions
     const ui5Element = sap.ui.getCore().byId(id);
     let result;
     try {
@@ -161,8 +163,8 @@ export default {
       )
         .map((element) => matchXmlElementToHtmlElement(root, element))
         .filter((element) => element !== undefined);
-    } catch (e) {
-      throw new Ui5SelectorEngineError(selector, e);
+    } catch (error) {
+      throw new Ui5SelectorEngineError(selector, error);
     }
   },
   query: (root, selector) => {
@@ -182,8 +184,8 @@ export default {
         options,
       );
       return result ? matchXmlElementToHtmlElement(root, result) : undefined;
-    } catch (e) {
-      throw new Ui5SelectorEngineError(selector, e);
+    } catch (error) {
+      throw new Ui5SelectorEngineError(selector, error);
     }
   },
 } satisfies SelectorEngine;

@@ -1,12 +1,14 @@
 import { expect, test } from "@playwright/test";
 import { escapeRegExp } from "lodash";
 
-import { Ui5Tester, fixDefaultTimeout } from "./testUtils";
+import { Ui5Tester, fixDefaultTimeout } from "./test-utils";
 
 const ui5Tester = new Ui5Tester("xpath");
 
 test.beforeAll(() => ui5Tester.registerSelectorEngine());
-test.beforeEach(({ page }) => fixDefaultTimeout(page));
+test.beforeEach(({ page }) => {
+  fixDefaultTimeout(page);
+});
 
 test.describe("ui5 site", () => {
   test.describe("control samples", () => {
@@ -17,26 +19,29 @@ test.describe("ui5 site", () => {
       test("*", ({ page }) => expect(page.locator("ui5_xpath=//*")).toHaveCount(45));
       test("id", ({ page }) =>
         expect(page.locator('ui5_xpath=//*[@id="__button1"]')).toHaveCount(1));
-      test.describe("ui5:property function", () => {});
-      test("nullish property", ({ page }) =>
-        expect(page.locator('ui5_xpath=//*[ui5:property(., "text")]')).toHaveCount(21));
-      test.describe("boolean property", () => {
-        test("true", ({ page }) =>
-          expect(page.locator('ui5_xpath=//sap.m.Button[ui5:property(., "enabled")]')).toHaveCount(
-            11,
-          ));
-        test("false", async ({ page }) => {
-          const button = page.locator('ui5_xpath=//sap.m.Button[not(ui5:property(., "enabled"))]');
-          await expect(button).toHaveCount(1);
-          await expect(button).toHaveId("__button8");
+      test.describe("ui5:property function", () => {
+        test("nullish property", ({ page }) =>
+          expect(page.locator('ui5_xpath=//*[ui5:property(., "text")]')).toHaveCount(21));
+        test.describe("boolean property", () => {
+          test("true", ({ page }) =>
+            expect(
+              page.locator('ui5_xpath=//sap.m.Button[ui5:property(., "enabled")]'),
+            ).toHaveCount(11));
+          test("false", async ({ page }) => {
+            const button = page.locator(
+              'ui5_xpath=//sap.m.Button[not(ui5:property(., "enabled"))]',
+            );
+            await expect(button).toHaveCount(1);
+            await expect(button).toHaveId("__button8");
+          });
         });
+        test("number property", ({ page }) =>
+          expect(
+            page.locator(
+              'ui5_xpath=//sap.m.Button[@id="__button2" and ui5:property(.,"busyIndicatorDelay")=1000]',
+            ),
+          ).toHaveCount(1));
       });
-      test("number property", ({ page }) =>
-        expect(
-          page.locator(
-            'ui5_xpath=//sap.m.Button[@id="__button2" and ui5:property(.,"busyIndicatorDelay")=1000]',
-          ),
-        ).toHaveCount(1));
     });
     test("interaction", async ({ page }) => {
       await page.click('ui5_xpath=//sap.m.Button[ui5:property(.,"text")="Accept"]');
@@ -46,7 +51,7 @@ test.describe("ui5 site", () => {
     test("includes the selector in the error message", async ({ page }) => {
       // ideally we shouldn't need the site here, but fontoxpath needs to build the xml from ui5 before it can validate the xpath
       await ui5Tester.navigateToControlSample(page, "sap.m", "sap.m.sample.Button");
-      const selector = "\\%(&*)^%*)[asdf";
+      const selector = String.raw`\%(&*)^%*)[asdf`;
       await expect(page.locator(`ui5_xpath=${selector}`).isVisible()).rejects.toThrow(
         new RegExp(`selector: "${escapeRegExp(selector)}"`, "u"),
       );
@@ -103,7 +108,7 @@ test.describe("no ui5 site", () => {
       await page.setContent("<div></div>");
       await page.evaluate(() => {
         // @ts-expect-error https://github.com/microsoft/TypeScript/issues/43434
-        window.sap = {};
+        globalThis.sap = {};
       });
       await expect(page.locator("ui5_xpath=//sap.m.Button")).toHaveCount(0);
     });
