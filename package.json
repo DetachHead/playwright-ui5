@@ -1,6 +1,13 @@
 {
   "name": "playwright-ui5",
   "version": "1.6.9",
+  "keywords": [],
+  "license": "ISC",
+  "author": "detachhead",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DetachHead/playwright-ui5.git"
+  },
   "files": [
     "dist",
     "src/node"
@@ -8,39 +15,16 @@
   "main": "dist/node/main.js",
   "scripts": {
     "test": "tsc -p tests/tsconfig.json && playwright test",
-    "lint:check": "eslint .",
-    "lint:fix": "npm run lint:check -- --fix",
-    "format:check": "prettier --check .",
-    "format:fix": "prettier --write .",
+    "lint:check": "oxlint .",
+    "lint:fix": "./pnpm.cmd run lint:check -- --fix",
+    "format:check": "oxfmt --check",
+    "format:fix": "oxfmt",
     "build:browser": "tsc -p src/browser/tsconfig.json && esbuild src/browser/css.ts --bundle --define:global=window --format=cjs --outdir=dist/browser && esbuild src/browser/xpath.ts --bundle --define:global=window --format=cjs --outdir=dist/browser",
     "build:node": "tsc -p src/node/tsconfig.json",
     "typecheck:config-files": "tsc",
-    "build": "rimraf ./dist && npm run build:browser && npm run build:node",
-    "check": "npm run typecheck:config-files && npm run build && npm run test && npm run lint:check && npm run format:check",
-    "setup": "npm ci && playwright install-deps && playwright install"
-  },
-  "keywords": [],
-  "author": "detachhead",
-  "license": "ISC",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/DetachHead/playwright-ui5.git"
-  },
-  "devDependencies": {
-    "@detachhead/eslint-config": "^1.5.0",
-    "@playwright/test": "1.61.1",
-    "@sapui5/ts-types-esm": "^1.123.1",
-    "@trivago/prettier-plugin-sort-imports": "^4.1.1",
-    "@types/eslint": "^8.4.6",
-    "@types/is-ci": "^3.0.0",
-    "@types/lodash": "^4.17.0",
-    "@types/node": "^20.12.6",
-    "@types/three": "^0.150.2",
-    "esbuild": "^0.15.5",
-    "is-ci": "^3.0.1",
-    "prettier": "^2.8.8",
-    "rimraf": "^3.0.2",
-    "typescript": "5.5.0-dev.20240429"
+    "build": "rimraf ./dist && ./pnpm.cmd run build:browser && ./pnpm.cmd run build:node",
+    "check": "./pnpm.cmd run typecheck:config-files && ./pnpm.cmd run build && ./pnpm.cmd run test && ./pnpm.cmd run lint:check && ./pnpm.cmd run format:check",
+    "setup": "./pnpm.cmd install && playwright install-deps && playwright install"
   },
   "dependencies": {
     "css-selector-parser": "^2",
@@ -50,21 +34,30 @@
     "throw-expression": "^1.0.2",
     "xmlbuilder2": "^3.1.1"
   },
-  "devEngines": {
-    "runtime": {"name": "node", "version": "26.3.1"}
+  "devDependencies": {
+    "@eslint-community/eslint-plugin-eslint-comments": ">=4.8.1",
+    "@playwright/test": "1.64.1",
+    "@sapui5/ts-types-esm": "^1.123.1",
+    "@stylistic/eslint-plugin": ">=5.10.0",
+    "@types/is-ci": "^3.0.0",
+    "@types/lodash": "^4.17.0",
+    "@types/node": "^20.12.6",
+    "@types/three": "^0.150.2",
+    "esbuild": "^0.15.5",
+    "eslint": ">=10.14.0",
+    "eslint-plugin-prefer-arrow-functions": ">=3.10.2",
+    "is-ci": "^3.0.1",
+    "oxfmt": ">=0.76.0",
+    "oxlint": ">=1.91.0",
+    "oxlint-tsgolint": ">=7.0.2005",
+    "rimraf": "^3.0.2",
+    "typescript": ">=7"
   },
-  "//": [
-    "https://github.com/trivago/prettier-plugin-sort-imports/issues/204#issuecomment-1431287240",
-    "https://github.com/DetachHead/eslint-plugin-detachhead/blob/master/docs/rules/suggestions-as-errors.md#troubleshooting"
-  ],
-  "overrides": {
-    "@trivago/prettier-plugin-sort-imports": {
-      "@babel/core": "7.20.12",
-      "@babel/parser": "7.20.15",
-      "@babel/traverse": "7.20.13"
-    },
-    "typescript": {
-      ".": "5.5.0-dev.20240429"
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "26.3.1",
+      "onFail": "download"
     }
   }
 }

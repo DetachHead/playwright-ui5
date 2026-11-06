@@ -1,6 +1,8 @@
 # playwright ui5
 
-playwright [custom selector engines](https://playwright.dev/docs/extensibility#custom-selector-engines) for [sapui5](https://ui5.sap.com/)
+playwright
+[custom selector engines](https://playwright.dev/docs/extensibility#custom-selector-engines) for
+[sapui5](https://ui5.sap.com/)
 
 ## installation
 
@@ -16,31 +18,35 @@ npm install playwright-ui5
 uv add playwright-ui5-select
 ```
 
-see the [playwright-ui5-select](https://github.com/JamesYFC/playwright-ui5-select) repo for usage instructions
+see the [playwright-ui5-select](https://github.com/JamesYFC/playwright-ui5-select) repo for usage
+instructions
 
 ## usage
 
-playwright-ui5 contains a selector engine for both css and xpath syntax. you can use whichever one you want, but the xpath one is more flexible since not all css selector syntax has been implemented yet.
+playwright-ui5 contains a selector engine for both css and xpath syntax. you can use whichever one
+you want, but the xpath one is more flexible since not all css selector syntax has been implemented
+yet.
 
 ### css selector engine
 
 ```ts
-import { selectors, test } from '@playwright/test'
-import { css } from 'playwright-ui5'
+import { selectors, test } from "@playwright/test";
+import { css } from "playwright-ui5";
 
 test.beforeAll(async () => {
-    await selectors.register('ui5', css)
-})
+  await selectors.register("ui5", css);
+});
 
-test('ui5 example', async ({ page }) => {
-    await page.goto('https://ui5.sap.com/')
-    await page.click("ui5=sap.m.Button[text='Get Started with UI5']")
-})
+test("ui5 example", async ({ page }) => {
+  await page.goto("https://ui5.sap.com/");
+  await page.click("ui5=sap.m.Button[text='Get Started with UI5']");
+});
 ```
 
 #### syntax
 
-the main difference between regular CSS selectors and playwright-ui5's syntax is is that `.` is not used for class names, rather they are treated as part of the type name (ie. `sap.m.Button`).
+the main difference between regular CSS selectors and playwright-ui5's syntax is is that `.` is not
+used for class names, rather they are treated as part of the type name (ie. `sap.m.Button`).
 
 | feature             | examples                                                   | suported | notes                                                                                                                                         |
 | ------------------- | ---------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -71,9 +77,13 @@ test('ui5 example', ({ page }) => {
 
 #### syntax
 
-unlike the CSS selector syntax, all xpath syntax is supported (even newer xpath features up to version 3.1 thanks to [fontoxpath](https://github.com/FontoXML/fontoxpath)).
+unlike the CSS selector syntax, all xpath syntax is supported (even newer xpath features up to
+version 3.1 thanks to [fontoxpath](https://github.com/FontoXML/fontoxpath)).
 
-note that properties cannot be accessed via the `@attribute` syntax. this is because the selector engine needs to build an XML tree of all the ui5 elements on the page, and for performance reasons the properties are not evaluated during this step, so the only attribute that can be accessed that way is the element's ID.
+note that properties cannot be accessed via the `@attribute` syntax. this is because the selector
+engine needs to build an XML tree of all the ui5 elements on the page, and for performance reasons
+the properties are not evaluated during this step, so the only attribute that can be accessed that
+way is the element's ID.
 
 for example, for a button with the id `"foo"` and the text `"bar"`, the xml view may look like this:
 
@@ -83,17 +93,23 @@ for example, for a button with the id `"foo"` and the text `"bar"`, the xml view
 </sap.m.Page>
 ```
 
-in this case, `//sap.m.Button[@id='foo']` will work, but `//sap.m.Button[@text='bar']` will not. to access the property, you can use the [`ui5:property`](#ui5property) xpath function instead, like so:
+in this case, `//sap.m.Button[@id='foo']` will work, but `//sap.m.Button[@text='bar']` will not. to
+access the property, you can use the [`ui5:property`](#ui5property) xpath function instead, like so:
 
 ```xpath
 //sap.m.Button[ui5:property(., 'text')='bar']
 ```
 
-the XML view matches the control tree from the [ui5 diagnostics window](https://sapui5.hana.ondemand.com/sdk/#/topic/04b75eae78ef4bae9b40cd7540ae8bdc) and the [ui5 inspector chrome extension](https://chromewebstore.google.com/detail/ui5-inspector/bebecogbafbighhaildooiibipcnbngo), so we recommend using one of these when working with the ui5 xpath selector engine.
+the XML view matches the control tree from the
+[ui5 diagnostics window](https://sapui5.hana.ondemand.com/sdk/#/topic/04b75eae78ef4bae9b40cd7540ae8bdc)
+and the
+[ui5 inspector chrome extension](https://chromewebstore.google.com/detail/ui5-inspector/bebecogbafbighhaildooiibipcnbngo),
+so we recommend using one of these when working with the ui5 xpath selector engine.
 
 #### the root node
 
-since the ui5 control tree can have multiple root nodes, the xpath selector engine wraps `sap-ui-area` nodes inside a `root` node:
+since the ui5 control tree can have multiple root nodes, the xpath selector engine wraps
+`sap-ui-area` nodes inside a `root` node:
 
 ```xml
 <root>
@@ -112,8 +128,8 @@ the following xpath functions are available in the `ui5:` namespace:
 
 ##### `ui5:property`
 
--   **arguments:** `element()`, `xs:string`
--   **return type:** `item()*`
+- **arguments:** `element()`, `xs:string`
+- **return type:** `item()*`
 
 gets the value for the property with the specified name from the specified element
 
@@ -123,10 +139,11 @@ gets the value for the property with the specified name from the specified eleme
 
 ##### `ui5:debug-xml`
 
--   **arguments:** `element()`
--   **return type:** N/A (always throws an exception)
+- **arguments:** `element()`
+- **return type:** N/A (always throws an exception)
 
-raises an exception containining the XML control tree with the specified element as the root. this function is only intended for debugging purposes.
+raises an exception containining the XML control tree with the specified element as the root. this
+function is only intended for debugging purposes.
 
 ```xpath
 ui5:debug-xml(/*)
