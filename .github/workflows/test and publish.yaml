@@ -78,6 +78,11 @@ jobs:
           name: build
           path: dist
 
+      - name: Configure npm auth
+        run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       # publish canary version on every push to every branch except master
       - name: canary version
         if: github.ref != 'refs/heads/master'
