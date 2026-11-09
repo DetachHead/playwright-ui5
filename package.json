@@ -19,7 +19,7 @@
     "lint:fix": "./pnpm.cmd run lint:check -- --fix",
     "format:check": "oxfmt --check",
     "format:fix": "oxfmt",
-    "build:browser": "tsc -p src/browser/tsconfig.json && esbuild src/browser/css.ts --bundle --define:global=window --format=cjs --outdir=dist/browser && esbuild src/browser/xpath.ts --bundle --define:global=window --format=cjs --outdir=dist/browser",
+    "build:browser": "tsc -p src/browser/tsconfig.json && node build.ts",
     "build:node": "tsc -p src/node/tsconfig.json",
     "typecheck:config-files": "tsc",
     "build": "rimraf ./dist && ./pnpm.cmd run build:browser && ./pnpm.cmd run build:node",
